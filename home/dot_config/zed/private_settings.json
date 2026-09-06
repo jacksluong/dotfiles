@@ -47,7 +47,7 @@
     "expand_terminal_card": false,
     "expand_edit_card": true,
     "sidebar_side": "right",
-    "default_width": 360.0,
+    "default_width": 480.0,
     "dock": "right",
     "play_sound_when_agent_done": "when_hidden",
     "favorite_models": [],
