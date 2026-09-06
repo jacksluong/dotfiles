@@ -516,5 +516,23 @@
     "unbind": {
       "ctrl-alt-pagedown": "agent::ScrollOutputToNextMessage"
     }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "ctrl-t": "editor::Transpose"
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "ctrl-t": "terminal_panel::Toggle"
+    }
+  },
+  {
+    "context": "Workspace",
+    "unbind": {
+      "ctrl-`": "terminal_panel::Toggle"
+    }
   }
 ]
