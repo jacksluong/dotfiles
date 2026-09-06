@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+# Installs the Homebrew formulae and casks. The embedded hashes re-run this 
+# whenever a Brewfile changes.
+#
+# Brewfile hash: {{ include (joinPath (dir .chezmoi.sourceDir) "Brewfile") | sha256sum }}
+{{ if .personal -}}
+# Brewfile.personal hash: {{ include (joinPath (dir .chezmoi.sourceDir) "Brewfile.personal") | sha256sum }}
+{{ end -}}
+set -euo pipefail
+
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+export HOMEBREW_BUNDLE_NO_UPGRADE=1
+
+# Homebrew refuses to load untrusted taps, so need to trust oh-my-posh explicitly
+echo "==> Tapping and trusting jandedobbeleer/oh-my-posh"
+brew tap jandedobbeleer/oh-my-posh
+brew trust --tap jandedobbeleer/oh-my-posh 2>/dev/null || true
+
+echo "==> Installing packages from Brewfile"
+brew bundle --file="{{ joinPath (dir .chezmoi.sourceDir) "Brewfile" }}"
+{{ if .personal -}}
+echo "==> Installing personal apps from Brewfile.personal"
+brew bundle --file="{{ joinPath (dir .chezmoi.sourceDir) "Brewfile.personal" }}"
+{{ end -}}

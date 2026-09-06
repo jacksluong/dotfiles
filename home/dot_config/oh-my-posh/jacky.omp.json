@@ -1,0 +1,150 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "version": 3,
+  "console_title_template": "{{ .Shell }} in {{ .Folder }}",
+  "transient_prompt": {
+    "template": "\n❯ ",
+    "background": "transparent",
+    "foreground": "p:prompt-green",
+    "foreground_templates": ["{{ if gt .Code 0 }}p:prompt-red{{ end }}"]
+  },
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "path",
+          "style": "plain",
+          "foreground": "p:path-base",
+          "template": "{{ .Path }}",
+          "properties": {
+            "style": "agnoster_short",
+            "folder_separator_icon": "/",
+            "max_depth": 4,
+            "gitdir_format": "<p:path-git>%s</>",
+            "right_format": "<p:path-important>%s</>",
+            "mapped_locations": {
+              "~/Developer": "<p:path-important>\ue709</>"
+            }
+          }
+        },
+        {
+          "type": "git",
+          "style": "plain",
+          "foreground": "p:path-base",
+          "template": " {{ if or .UpstreamGone (not .Upstream) }}<d>{{ .HEAD }}</d>{{ else }}<p:git-head>{{ .HEAD }}</>{{ end }}<p:git-commits>{{ if and .BranchStatus (or (gt .Behind 0) (gt .Ahead 0)) }} {{ .BranchStatus }}{{ end }}</><p:git-changes>{{ if gt .StashCount 0 }} *{{ .StashCount }}{{ end }}{{ if gt .Staging.Added 0 }} +{{ .Staging.Added }}{{ end }}{{ if gt .Staging.Deleted 0 }} -{{ .Staging.Deleted }}{{ end }}{{ if gt .Staging.Modified 0 }} !{{ .Staging.Modified }}{{ end }}{{ if gt .Staging.Untracked 0 }} ?{{ .Staging.Untracked }}{{ end }}{{ if gt .Staging.Unmerged 0 }} <p:git-conflict>x{{ .Staging.Unmerged }}</>{{ end }}<d>{{ if gt .Working.Added 0 }} +{{ .Working.Added }}{{ end }}{{ if gt .Working.Deleted 0 }} -{{ .Working.Deleted }}{{ end }}{{ if gt .Working.Modified 0 }} !{{ .Working.Modified }}{{ end }}{{ if gt .Working.Untracked 0 }} ?{{ .Working.Untracked }}{{ end }}</d></> ",
+          "properties": {
+            "branch_icon": "",
+            "fetch_status": true
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "right",
+      "filler": "<p:filler>·</>",
+      "segments": [
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "p:filler",
+          "template": "· "
+        },
+        {
+          "type": "executiontime",
+          "style": "plain",
+          "foreground": "p:execution-time",
+          "template": "{{ .FormattedMs }} ",
+          "properties": {
+            "threshold": 3000,
+            "style": "roundrock"
+          }
+        },
+        {
+          "type": "status",
+          "style": "plain",
+          "foreground": "p:status-error",
+          "foreground_templates": ["{{ if eq .Code 0 }}p:status-ok{{ end }}"],
+          "template": "{{ if ne .Code 0 }}✘ {{ end }}",
+          "properties": {
+            "always_enabled": false
+          }
+        },
+        {
+          "type": "python",
+          "style": "plain",
+          "foreground": "p:python",
+          "template": "{{ if .Venv }}py {{ .Venv }} {{ end }}",
+          "properties": {
+            "display_mode": "context",
+            "fetch_virtual_env": true
+          }
+        },
+        {
+          "type": "node",
+          "style": "plain",
+          "foreground": "p:node",
+          "template": "node {{ .Full }} ",
+          "properties": {
+            "display_mode": "context",
+            "fetch_package_manager": false
+          }
+        },
+        {
+          "type": "go",
+          "style": "plain",
+          "foreground": "p:go",
+          "template": "go {{ .Full }} ",
+          "properties": {
+            "display_mode": "context"
+          }
+        },
+        {
+          "type": "ruby",
+          "style": "plain",
+          "foreground": "p:ruby",
+          "template": "ruby {{ .Full }} ",
+          "properties": {
+            "display_mode": "context"
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "p:prompt-green",
+          "foreground_templates": ["{{ if gt .Code 0 }}p:prompt-red{{ end }}"],
+          "template": "❯ "
+        }
+      ]
+    }
+  ],
+  "palette": {
+    "path-base": "#a7a6a6",
+    "path-important": "#dfdede",
+    "path-git": "#59aae4",
+    "git-head": "#EF8D34",
+    "git-commits": "#80c75c",
+    "git-changes": "#EF8D34",
+    "git-conflict": "#FF0000",
+    "status-ok": "#70F050",
+    "status-error": "#FF0000",
+    "execution-time": "#9E9E9E",
+    "python": "#4EC9B0",
+    "node": "#A8FF60",
+    "go": "#4EC9B0",
+    "ruby": "#FF6B6B",
+    "prompt-green": "#AFFF87",
+    "prompt-red": "#FF0033",
+    "filler": "#666666"
+  }
+}

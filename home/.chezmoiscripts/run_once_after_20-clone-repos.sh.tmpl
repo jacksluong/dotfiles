@@ -1,0 +1,27 @@
+{{ if .personal -}}
+#!/bin/zsh
+#
+# Clones my repos into ~/Developer via the `clone` shell function.
+set -euo pipefail
+
+source "$HOME/.config/zsh/helpers.sh"
+source "$HOME/.config/zsh/git.sh"
+
+repos=(
+  jacksluong/pocketful
+  jacksluong/personal-website
+  jacksluong/barnata
+  jacksluong/afterimage
+  jacksluong/wordistry
+  # No jacksluong/skills because chezmoi handles it as an external
+)
+
+for repo in $repos; do
+  name="${repo##*/}"
+  if [[ -d "$HOME/Developer/$name" ]]; then
+    continue
+  fi
+  echo "==> Cloning $repo into ~/Developer/$name"
+  clone "$repo" || echo "==> Could not clone $repo, skipping" >&2
+done
+{{- end -}}

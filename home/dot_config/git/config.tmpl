@@ -1,0 +1,57 @@
+# Basics
+[user]
+	name = Jacky Luong
+{{- if .personal }}
+	email = 27376487+jacksluong@users.noreply.github.com
+{{- else }}
+{{-   $workEmail := get . "git_email" }}
+{{-   if not $workEmail }}{{ fail "git_email missing/empty in chezmoi data -- re-run `chezmoi init` to be prompted for it, or set it under [data] in ~/.config/chezmoi/chezmoi.toml" }}{{ end }}
+	email = {{ $workEmail }}
+{{- end }}
+{{- if not .personal }}
+
+# Work machine: repos under my personal GitHub account go through the
+# github.com-personal SSH alias (see ~/.ssh/config, pointing at the personal
+# key) and commit with the personal identity. The includeIf matches the
+# canonical URL as stored in the remote -- insteadOf rewrites are not applied
+# to it.
+[url "git@github.com-personal:jacksluong/"]
+	insteadOf = git@github.com:jacksluong/
+[includeIf "hasconfig:remote.*.url:git@github.com:jacksluong/**"]
+	path = ~/.config/git/config-personal
+[includeIf "hasconfig:remote.*.url:https://github.com/jacksluong/**"]
+	path = ~/.config/git/config-personal
+{{- end }}
+[credential]
+	helper = osxkeychain
+[push]
+	default = current
+[filter "lfs"]
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+[init]
+	defaultBranch = main
+[fetch]
+	prune = true
+
+# Extras
+[alias]
+	lg = log --graph --oneline --abbrev=7 --decorate --date=relative --format=format:'%C("bold #C0FAB6")%h%Creset %C(white)%<(50,trunc)%s%Creset %C(dim white)%>(14,trunc)%an%Creset %C("#8FAEAE")%<(8,trunc)%ar%Creset%C(auto)%+d%Creset' --all
+	lg2 = log --oneline --abbrev=7 --decorate --date=relative --format=format:' %C("bold #C0FAB6")%h%Creset %C(white)%<(51,trunc)%s%Creset %C(dim white)%>(14,trunc)%an%Creset %C("#8FAEAE")%<(13)%ar%Creset\n %C(auto)%d%Creset' --all
+	co = checkout
+	c = commit
+	a = add
+	s = status -s
+	d = diff --stat
+	yeet = reset --hard
+	# `git exec <command>` to execute <command> in the root directory of repo
+	url = "!git exec giturl"
+    copy = "!git clone \"$(git config --get remote.origin.url)\" \"$(dirname \"$(git rev-parse --show-toplevel)\")/$(basename \"$(git rev-parse --show-toplevel)\")-copy\""
+
+[color "decorate"]
+	# Controls the color of branch names in `git lg`, which are colored %C(auto)
+	HEAD = "bold white"
+	branch = "#EF8D34"
+	remoteBranch = "#A46321"

@@ -1,0 +1,5 @@
+# Personal identity for repos under my personal GitHub account, included
+# from ~/.config/git/config on work machines via includeIf hasconfig
+# (deployed on work machines only -- see .chezmoiignore).
+[user]
+	email = 27376487+jacksluong@users.noreply.github.com

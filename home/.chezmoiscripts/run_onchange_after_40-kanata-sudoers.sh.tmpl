@@ -1,0 +1,70 @@
+#!/bin/bash
+#
+# Grants passwordless sudo for kanata-tray so its LaunchAgent can start
+# `sudo kanata-tray` without a prompt. The rule pins the binary's sha256, and the
+# hash embedded below re-runs this on every kanata-tray upgrade so it self-heals.
+{{- $bin := "/opt/homebrew/bin/kanata-tray" }}
+{{- if stat $bin }}
+# kanata-tray sha256: {{ output "shasum" "-a" "256" $bin | trim }}
+{{- else }}
+# kanata-tray not installed at render time; script skips at runtime
+{{- end }}
+set -euo pipefail
+export LC_ALL=C
+
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+if ! command -v kanata-tray &>/dev/null; then
+  echo "kanata-sudoers: kanata-tray not on PATH, skipping" >&2
+  exit 0
+fi
+
+bin="$(command -v kanata-tray)"
+hash="$(shasum -a 256 "$bin" | cut -d ' ' -f 1)"
+rule="$(whoami) ALL=(root) NOPASSWD:SETENV: sha256:${hash} ${bin}"
+
+# Our rule goes in one of these two files and nothing else is ever touched.
+# sudoers.d loads in lexical order and the LAST match wins, so pick the "zz-"
+# spelling when a foreign file sorts after the plain one and would beat it
+# (Jamf machines ship a /etc/sudoers.d/sudoers of their own).
+plain="kanata-tray"
+prefixed="zz-kanata-tray"
+
+name="$plain"
+for f in /etc/sudoers.d/*; do
+  [ -e "$f" ] || continue
+  other="${f##*/}"
+  { [ "$other" = "$plain" ] || [ "$other" = "$prefixed" ]; } && continue
+  if [[ "$other" > "$plain" ]]; then
+    name="$prefixed"
+    break
+  fi
+done
+
+if [ "$name" = "$plain" ]; then
+  stale="$prefixed"
+else
+  stale="$plain"
+fi
+target="/private/etc/sudoers.d/${name}"
+stale="/private/etc/sudoers.d/${stale}"
+
+# Skip the write if sudo is already cached and the rule is current
+if sudo -n grep -qxF "$rule" "$target" 2>/dev/null && ! sudo -n test -e "$stale" 2>/dev/null; then
+  echo "==> sudoers rule for kanata-tray is already current"
+  exit 0
+fi
+
+echo
+echo "==> Installing passwordless sudoers rule for kanata-tray at ${target} (needs sudo)"
+
+# Validate first, since an unparseable file in sudoers.d can lock sudo out entirely
+tmp="$(mktemp)"
+printf '%s\n' "$rule" > "$tmp"
+visudo -cf "$tmp" >/dev/null
+sudo install -m 0440 -o root -g wheel "$tmp" "$target"
+rm -f "$tmp"
+
+# Drop our other spelling so a name flip doesn't leave two rules with different
+# pinned hashes
+sudo rm -f "$stale"

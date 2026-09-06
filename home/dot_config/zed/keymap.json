@@ -1,0 +1,520 @@
+// Zed keymap
+//
+// For information on binding keys, see the Zed
+// documentation: https://zed.dev/docs/key-bindings
+//
+// To see the default key bindings run `zed: open default keymap`
+// from the command palette.
+[
+  {
+    "context": "Workspace",
+    "bindings": {
+      // "shift shift": "file_finder::Toggle"
+    },
+  },
+  {
+    "context": "Editor && vim_mode == insert",
+    "bindings": {
+      // "j k": "vim::NormalBefore"
+    },
+  },
+  {
+    "bindings": {
+      "cmd-shift-g": "git_panel::Toggle"
+    }
+  },
+  {
+    "unbind": {
+      "cmd-0": [
+        "zed::ResetBufferFontSize",
+        {
+          "persist": false
+        }
+      ]
+    }
+  },
+  {
+    "unbind": {
+      "cmd-h": "zed::Hide"
+    }
+  },
+  {
+    "unbind": {
+      "alt-cmd-h": "zed::HideOthers"
+    }
+  },
+  {
+    "context": "KeymapEditor",
+    "unbind": {
+      "cmd-e": "zed::OpenKeymapFile"
+    }
+  },
+  {
+    "bindings": {
+      "cmd-e": "editor::ToggleFocus"
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "cmd-0": "workspace::ToggleRightDock"
+    }
+  },
+  {
+    "context": "Workspace",
+    "unbind": {
+      "cmd-r": "workspace::ToggleRightDock"
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "cmd-1": "workspace::ToggleBottomDock"
+    }
+  },
+  {
+    "context": "Workspace",
+    "unbind": {
+      "cmd-j": "workspace::ToggleBottomDock"
+    }
+  },
+  {
+    "context": "Workspace",
+    "unbind": {
+      "alt-cmd-b": "workspace::ToggleRightDock"
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "cmd-3": "workspace::ToggleLeftDock"
+    }
+  },
+  {
+    "context": "Workspace",
+    "unbind": {
+      "cmd-b": "workspace::ToggleLeftDock"
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "cmd-2": "multi_workspace::ToggleWorkspaceSidebar"
+    }
+  },
+  {
+    "context": "Workspace",
+    "unbind": {
+      "alt-cmd-j": "multi_workspace::ToggleWorkspaceSidebar"
+    }
+  },
+  {
+    "context": "Workspace",
+    "unbind": {
+      "cmd-s": "workspace::Save"
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "cmd-s": "multi_workspace::FocusWorkspaceSidebar"
+    }
+  },
+  {
+    "context": "Workspace",
+    "unbind": {
+      "alt-cmd-;": "multi_workspace::FocusWorkspaceSidebar"
+    }
+  },
+  {
+    "context": "Workspace",
+    "unbind": {
+      "cmd-w": "workspace::CloseActiveDock"
+    }
+  },
+  {
+    "context": "Editor && mode == full",
+    "bindings": {
+      "cmd-backspace": "editor::DeleteLine"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "cmd-shift-k": "editor::DeleteLine"
+    }
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "cmd-shift-r": "editor::FindAllReferences"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "alt-shift-f12": "editor::FindAllReferences"
+    }
+  },
+  {
+    "context": "AgentPanel || AcpThread",
+    "bindings": {
+      "cmd-n": [
+        "agent::NewExternalAgentThread",
+        {
+          "agent": "claude-acp"
+        }
+      ]
+    }
+  },
+  {
+    "context": "AgentPanel > Terminal",
+    "unbind": {
+      "cmd-n": "agent::NewThread"
+    }
+  },
+  {
+    "bindings": {
+      "ctrl-g r": "git::SelectRepo"
+    }
+  },
+  {
+    "bindings": {
+      "ctrl-g u": "git::ViewUnstagedChanges"
+    }
+  },
+  {
+    "bindings": {
+      "ctrl-g d": "git::Diff"
+    }
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "ctrl-right": "editor::MoveToNextSubwordEnd"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "ctrl-alt-right": "editor::MoveToNextSubwordEnd"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "alt-shift-up": "editor::DuplicateLineUp"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "alt-shift-down": "editor::DuplicateLineDown"
+    }
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "alt-shift-down": "editor::SelectSmallerSyntaxNode"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "ctrl-shift-left": "editor::SelectSmallerSyntaxNode"
+    }
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "alt-shift-up": "editor::SelectLargerSyntaxNode"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "ctrl-shift-right": "editor::SelectLargerSyntaxNode"
+    }
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "ctrl-left": "editor::MoveToPreviousSubwordStart"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "ctrl-alt-left": "editor::MoveToPreviousSubwordStart"
+    }
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "ctrl-shift-right": "editor::SelectToNextSubwordEnd"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "ctrl-alt-shift-right": "editor::SelectToNextSubwordEnd"
+    }
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "ctrl-shift-left": "editor::SelectToPreviousSubwordStart"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "ctrl-alt-shift-left": "editor::SelectToPreviousSubwordStart"
+    }
+  },
+  {
+    "bindings": {
+      "cmd-n cmd-e": "workspace::ActivateNextPane"
+    }
+  },
+  {
+    "context": "Pane",
+    "bindings": {
+      "cmd-[": "pane::GoBack"
+    }
+  },
+  {
+    "context": "Pane",
+    "unbind": {
+      "ctrl--": "pane::GoBack"
+    }
+  },
+  {
+    "context": "Pane",
+    "bindings": {
+      "cmd-]": "pane::GoForward"
+    }
+  },
+  {
+    "context": "Pane",
+    "unbind": {
+      "ctrl-_": "pane::GoForward"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "cmd-]": "editor::Indent"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "cmd-[": "editor::Outdent"
+    }
+  },
+  {
+    "context": "Editor && !Dock",
+    "bindings": {
+      "cmd-shift-enter": "editor::Rename"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "f2": "editor::Rename"
+    }
+  },
+  {
+    "context": "Editor && mode == full && !Dock",
+    "bindings": {
+      "cmd-enter": "editor::GoToDefinition"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "f12": "editor::GoToDefinition"
+    }
+  },
+  {
+    "context": "Editor && mode == full && !Dock",
+    "bindings": {
+      "ctrl-cmd-enter": "editor::GoToDefinitionSplit"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "cmd-k f12": "editor::GoToDefinitionSplit"
+    }
+  },
+  {
+    "context": "Editor && mode == full && !Dock",
+    "bindings": {
+      "alt-cmd-enter": "editor::GoToTypeDefinitionSplit"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "alt-cmd-f12": "editor::GoToTypeDefinitionSplit"
+    }
+  },
+  {
+    "context": "Editor && mode == full && !Dock",
+    "bindings": {
+      "alt-shift-enter": "editor::NewlineBelow"
+    }
+  },
+  {
+    "context": "Editor && mode == full",
+    "unbind": {
+      "cmd-enter": "editor::NewlineBelow"
+    }
+  },
+  {
+    "context": "Editor && mode == full && !Dock",
+    "bindings": {
+      "shift-enter": "editor::NewlineAbove"
+    }
+  },
+  {
+    "context": "Editor && mode == full",
+    "unbind": {
+      "cmd-shift-enter": "editor::NewlineAbove"
+    }
+  },
+  {
+    "context": "Pane",
+    "unbind": {
+      "cmd-{": "pane::ActivatePreviousItem"
+    }
+  },
+  {
+    "context": "Pane",
+    "unbind": {
+      "cmd-}": "pane::ActivateNextItem"
+    }
+  },
+  {
+    "context": "SettingsWindow",
+    "unbind": {
+      "cmd-}": "settings_editor::FocusNextFile"
+    }
+  },
+  {
+    "context": "SettingsWindow",
+    "unbind": {
+      "cmd-{": "settings_editor::FocusPreviousFile"
+    }
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "cmd-{": "editor::Fold"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "alt-cmd-[": "editor::Fold"
+    }
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "cmd-}": "editor::UnfoldLines"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "alt-cmd-]": "editor::UnfoldLines"
+    }
+  },
+  {
+    "context": "RecentProjects || RecentProjects > Picker > Editor",
+    "unbind": {
+      "cmd-shift-a": "workspace::AddFolderToProject"
+    }
+  },
+  {
+    "context": "RecentProjects || RecentProjects > Picker > Editor",
+    "bindings": {
+      "ctrl-alt-cmd-l ctrl-alt-cmd-l": "workspace::AddFolderToProject"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "ctrl-a": [
+        "editor::MoveToBeginningOfLine",
+        {
+          "stop_at_soft_wraps": false,
+          "stop_at_indent": true
+        }
+      ]
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "ctrl-a": "agent::ToggleFocus"
+    }
+  },
+  {
+    "context": "Workspace",
+    "unbind": {
+      "cmd-?": "agent::ToggleFocus"
+    }
+  },
+  {
+    "context": "AcpThread > Editor",
+    "bindings": {
+      "cmd-[": "agent::ScrollOutputToPreviousMessage"
+    }
+  },
+  {
+    "context": "AcpThread > Editor",
+    "unbind": {
+      "ctrl-alt-pageup": "agent::ScrollOutputToPreviousMessage"
+    }
+  },
+  {
+    "context": "AcpThread",
+    "bindings": {
+      "cmd-[": "agent::ScrollOutputToPreviousMessage"
+    }
+  },
+  {
+    "context": "AcpThread",
+    "unbind": {
+      "ctrl-alt-pageup": "agent::ScrollOutputToPreviousMessage"
+    }
+  },
+  {
+    "context": "AcpThread > Editor",
+    "bindings": {
+      "cmd-]": "agent::ScrollOutputToNextMessage"
+    }
+  },
+  {
+    "context": "AcpThread > Editor",
+    "unbind": {
+      "ctrl-alt-pagedown": "agent::ScrollOutputToNextMessage"
+    }
+  },
+  {
+    "context": "AcpThread",
+    "bindings": {
+      "cmd-]": "agent::ScrollOutputToNextMessage"
+    }
+  },
+  {
+    "context": "AcpThread",
+    "unbind": {
+      "ctrl-alt-pagedown": "agent::ScrollOutputToNextMessage"
+    }
+  }
+]

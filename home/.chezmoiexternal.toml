@@ -1,0 +1,10 @@
+# Personal AI skills repo. Cloned to ~/Developer/skills, then linked into the
+# harness skill directories by .chezmoiscripts/run_after_60-ai-skills.sh.
+# The URL is HTTPS so the clone needs no credentials and succeeds on a first
+# apply; run_after_60-ai-skills.sh points the push URL back at SSH.
+["Developer/skills"]
+    type = "git-repo"
+    url = "https://github.com/jacksluong/skills.git"
+    refreshPeriod = "1m"
+    [ "Developer/skills".pull ]
+        args = ["--autostash", "--rebase"]

@@ -1,0 +1,155 @@
+#!/bin/bash
+#
+# SSH bootstrap: generates this machine's ed25519 key(s), logs `gh` in
+# through the browser, and registers the primary key on the GitHub account.
+set -euo pipefail
+
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+ssh_dir="$HOME/.ssh"
+mkdir -p "$ssh_dir"
+chmod 700 "$ssh_dir"
+
+# Pre-trust GitHub's host keys so the first SSH clone doesn't stop to ask
+if ! ssh-keygen -F github.com &>/dev/null; then
+  echo "==> Adding github.com to ${ssh_dir}/known_hosts"
+  if host_keys="$(curl -fsS https://api.github.com/meta | jq -r '.ssh_keys[] | "github.com \(.)"')"; then
+    printf '%s\n' "$host_keys" >> "$ssh_dir/known_hosts"
+  else
+    echo "==> Could not fetch GitHub's host keys; the first SSH clone will ask to confirm them" >&2
+  fi
+fi
+
+host="$(hostname -s)"
+
+gen_key() {
+  local path="$1" comment="$2"
+  if [[ -f "$path" ]]; then
+    return 0
+  fi
+  echo "==> Generating $path"
+  ssh-keygen -t ed25519 -C "$comment" -f "$path" -N ""
+}
+
+print_key() {
+  echo "--- ${1##*/}.pub ---"
+  cat "${1}.pub"
+  echo
+}
+
+{{ if .personal -}}
+# One account, one key
+primary="$ssh_dir/id_ed25519"
+secondary=""
+gen_key "$primary" "personal-github@${host}"
+{{- else -}}
+# Two keys, one for work and one for personal
+primary="$ssh_dir/id_ed25519"
+secondary="$ssh_dir/id_ed25519_personal"
+gen_key "$primary" "work-github@${host}"
+gen_key "$secondary" "personal-github@${host}"
+{{- end }}
+
+# If `gh` is missing for some reason, print the keys to register manually
+if ! command -v gh &>/dev/null; then
+  echo "==> gh is not installed; add these public keys manually at https://github.com/settings/keys"
+  print_key "$primary"
+  if [[ -n "$secondary" ]]; then
+    print_key "$secondary"
+  fi
+  exit 0
+fi
+
+{{ if .personal -}}
+if ! gh auth status &>/dev/null; then
+  echo "==> Log in to GitHub"
+  gh auth login --hostname github.com --git-protocol ssh --scopes admin:public_key --skip-ssh-key --web
+fi
+{{- else -}}
+# Work machines juggle two accounts, so confirm gh landed on the right one and
+# keep attempting to log in until it does
+while true; do
+  if ! gh auth status &>/dev/null; then
+    echo "==> Log in to GitHub with your work account"
+    gh auth login --git-protocol ssh --scopes admin:public_key --skip-ssh-key --web
+  fi
+
+  if [[ ! -t 0 ]]; then
+    break
+  fi
+
+  current_login="$(gh api user --jq .login 2>/dev/null || true)"
+  read -r -p "==> gh is logged in as ${current_login:-an unknown account}. Is this the right account? [Y/n] " reply
+  if [[ ! "$reply" =~ ^[Nn] ]]; then
+    break
+  fi
+
+  gh auth logout || true
+done
+{{- end }}
+
+# GitHub stores type + base64 without the comment, so compare on that to tell
+# whether a key is already on the account gh is currently acting as
+is_registered() {
+  local material
+  material="$(cut -d ' ' -f 1,2 < "${1}.pub")"
+  gh api --paginate user/keys --jq '.[].key' 2>/dev/null | grep -qxF "$material"
+}
+
+default_title="$(scutil --get ComputerName 2>/dev/null || echo "$host")"
+
+add_key() {
+  local path="$1" title="$default_title" reply
+  if is_registered "$path"; then
+    echo "==> ${path##*/}.pub is already on the GitHub account"
+    return 0
+  fi
+  if [[ -t 0 ]]; then
+    read -r -p "==> Title for ${path##*/}.pub on GitHub [$default_title]: " reply
+    title="${reply:-$default_title}"
+  fi
+  echo "==> Adding ${path##*/}.pub to GitHub as \"$title\""
+  gh ssh-key add "${path}.pub" --title "$title"
+}
+
+if ! add_key "$primary"; then
+  echo "==> gh could not add the key; add it manually at https://github.com/settings/keys" >&2
+  print_key "$primary"
+fi
+
+# For work machines, the personal key needs to be added separately
+if [[ -n "$secondary" ]]; then
+  personal_login="jacksluong"
+  work_login="$(gh api user --jq .login 2>/dev/null || true)"
+
+  # Log in to the personal account
+  if ! gh auth switch --hostname github.com --user "$personal_login" &>/dev/null && [[ -t 0 ]]; then
+    echo
+    echo "==> Next, the personal key goes on the $personal_login account."
+    echo "    Sign out of GitHub in your browser first, and the next step"
+    echo "    will prompt you to log in as $personal_login."
+    read -r -p "==> Press enter once you have signed out: " _
+    gh auth login --hostname github.com --git-protocol ssh --scopes admin:public_key --skip-ssh-key --web || true
+  fi
+
+  # Add the personal key to the personal account
+  if [[ "$(gh api user --jq .login 2>/dev/null || true)" == "$personal_login" ]]; then
+    if ! add_key "$secondary"; then
+      echo "==> gh could not add the key; add it at https://github.com/settings/keys" >&2
+      echo '    and test with `ssh -T git@github.com-personal`' >&2
+      print_key "$secondary"
+    fi
+    echo "==> Finished with $personal_login; you can sign out of it in your browser."
+  else
+    echo "==> gh is not acting as $personal_login; add the personal key at https://github.com/settings/keys" >&2
+    echo '    and test with `ssh -T git@github.com-personal`' >&2
+    print_key "$secondary"
+  fi
+
+  # Switch back to the work account
+  if [[ -n "$work_login" && "$(gh api user --jq .login 2>/dev/null || true)" != "$work_login" ]]; then
+    echo "==> Switching gh back to $work_login"
+    gh auth switch --hostname github.com --user "$work_login" \
+      || echo "==> Could not switch back; run: gh auth switch --user $work_login" >&2
+  fi
+fi

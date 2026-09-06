@@ -1,0 +1,27 @@
+#!/bin/bash
+#
+# Prints the setup steps that can't be automated.
+set -euo pipefail
+
+cat <<'EOF'
+
+A few things need to be finished by hand:
+
+  * kanata: in System Settings > Privacy & Security, add BOTH `kanata` and
+    `kanata-tray` to BOTH Input Monitoring AND Accessibility (all four
+    toggles). The LaunchAgent and its sudoers rule are already installed, and
+    KeepAlive retries every 20s, so kanata starts on its own once all four
+    toggles are granted.
+
+  * iTerm2: Settings > Keys > Key Bindings > Presets > Import, pick
+    {{ .chezmoi.workingTree }}/imports/iterm/keybindings.itermkeymap, then
+    Settings > Profiles > Other Actions > Import JSON Profiles, pick
+    {{ .chezmoi.workingTree }}/imports/iterm/profiles.json, then restart iTerm2.
+
+  * Raycast: Settings > Advanced > Import Settings, pick
+    {{ .chezmoi.workingTree }}/imports/raycast.rayconfig.
+
+  * Restart your terminal to pick up the new shell
+    configuration.
+
+EOF

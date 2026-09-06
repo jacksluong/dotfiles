@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+# Moves the dotfiles repo origin onto SSH once a key that can reach it exists.
+set -euo pipefail
+
+repo={{ .chezmoi.workingTree | quote }}
+
+if ! git -C "$repo" rev-parse --git-dir &>/dev/null; then
+  exit 0
+fi
+
+# `chezmoi init` clones over HTTPS because no key exists that early, which
+# leaves pushes going through the credential helper instead of the SSH key
+url="$(git -C "$repo" config --get remote.origin.url 2>/dev/null || true)"
+case "$url" in
+  https://github.com/*)
+    path="${url#https://github.com/}"
+    ssh_url="git@github.com:${path%.git}.git"
+    if GIT_TERMINAL_PROMPT=0 git -C "$repo" ls-remote "$ssh_url" HEAD &>/dev/null; then
+      git -C "$repo" remote set-url origin "$ssh_url"
+      echo "==> Moved the dotfiles origin to $ssh_url"
+    else
+      echo "==> $ssh_url is not reachable; leaving the dotfiles origin on HTTPS" >&2
+    fi
+    ;;
+esac

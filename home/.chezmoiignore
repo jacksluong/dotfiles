@@ -1,0 +1,5 @@
+{{- if .personal }}
+# Personal machines commit with the personal identity everywhere, so this
+# supplementary config file is only for work machines.
+.config/git/config-personal
+{{- end }}

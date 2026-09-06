@@ -1,0 +1,10 @@
+{{- $personal := promptBoolOnce . "personal" "Install personal apps" -}}
+{{- $gitEmail := "" -}}
+{{- if not $personal -}}
+{{-   $gitEmail = promptStringOnce . "git_email" "Work git email" -}}
+{{- end -}}
+sourceDir = {{ dir .chezmoi.sourceDir | quote }}
+
+[data]
+    personal = {{ $personal }}
+    git_email = {{ $gitEmail | quote }}

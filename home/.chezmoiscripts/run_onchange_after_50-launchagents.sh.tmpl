@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+# Reloads every managed LaunchAgent when its plist changes.
+#
+{{ range glob (joinPath .chezmoi.sourceDir "private_Library/LaunchAgents/*.plist") -}}
+# {{ base . }} hash: {{ include . | sha256sum }}
+{{ end -}}
+set -euo pipefail
+
+{{ range glob (joinPath .chezmoi.sourceDir "private_Library/LaunchAgents/*.plist") -}}
+plist="$HOME/Library/LaunchAgents/{{ base . }}"
+echo "==> Reloading {{ base . }}"
+launchctl unload "$plist" 2>/dev/null || true
+launchctl load "$plist"
+{{ end -}}

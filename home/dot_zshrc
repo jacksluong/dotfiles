@@ -1,0 +1,72 @@
+# needed for `claude` command
+export PATH="$HOME/.local/bin:$PATH"
+
+# oh-my-posh
+command -v oh-my-posh &>/dev/null && eval "$(oh-my-posh init zsh --config $HOME/.config/oh-my-posh/jacky.omp.json)"
+
+# history settings
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=50000
+setopt SHARE_HISTORY
+setopt HIST_IGNORE_ALL_DUPS
+setopt histignorespace
+setopt interactivecomments
+
+# syntax highlighting
+# https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/docs/highlighters/main.md
+typeset -A ZSH_HIGHLIGHT_STYLES
+ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#AB641D'
+ZSH_HIGHLIGHT_STYLES[alias]='fg=#FF9433'
+ZSH_HIGHLIGHT_STYLES[suffix-alias]='fg=#FF9433'
+ZSH_HIGHLIGHT_STYLES[global-alias]='fg=#FF9433'
+ZSH_HIGHLIGHT_STYLES[builtin]='fg=#FF9433'
+ZSH_HIGHLIGHT_STYLES[function]='fg=#FF9433'
+ZSH_HIGHLIGHT_STYLES[command]='fg=#FF9433'
+ZSH_HIGHLIGHT_STYLES[default]='fg=#FFF'
+ZSH_HIGHLIGHT_STYLES[path]='fg=#FFF,underline'
+ZSH_HIGHLIGHT_STYLES[path_pathseparator]='fg=#FFF,underline'
+ZSH_HIGHLIGHT_STYLES[path_prefix]=''
+ZSH_HIGHLIGHT_STYLES[path_prefix_pathseparator]=''
+ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=#FFF'
+ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=#FFF'
+
+# pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || path+="$PYENV_ROOT/bin"
+command -v pyenv &>/dev/null && eval "$(pyenv init -)"
+
+# pnpm
+export PNPM_HOME="$HOME/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+esac
+
+# PATH management
+# https://stackoverflow.com/questions/11530090/adding-a-new-entry-to-the-path-variable-in-zsh#comment72796046_18077919
+typeset -TUx PATH path
+
+# shell functions/aliases (order matters: helpers.sh must load before git.sh)
+[[ -f "$HOME/.config/zsh/helpers.sh" ]] && source "$HOME/.config/zsh/helpers.sh"
+[[ -f "$HOME/.config/zsh/git.sh" ]] && source "$HOME/.config/zsh/git.sh"
+[[ -f "$HOME/.config/zsh/aliases.sh" ]] && source "$HOME/.config/zsh/aliases.sh"
+[[ -f "$HOME/.config/zsh/icd.sh" ]] && source "$HOME/.config/zsh/icd.sh"
+
+# machine-specific logic, if any
+[[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
+
+# autocompletion
+autoload -Uz compinit && compinit
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'  # case insensitive tab completion
+
+# fzf (ctrl-t files, ctrl-r history; must follow compinit for fzf-completion)
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_DEFAULT_OPTS='--height 40% --layout reverse --border'
+export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers {}'"
+command -v fzf &>/dev/null && source <(fzf --zsh) && bindkey -r '\ec'
+
+# zsh plugins
+[[ -f "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+[[ -f "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"  # needs to be on the last line

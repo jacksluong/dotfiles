@@ -1,0 +1,16 @@
+# Targets left behind by renames. chezmoi only removes what is listed here,
+# and only on apply. Safe to delete once every machine has applied once.
+
+# Moved to ~/.config/git/. ~/.gitconfig must go: git reads it after the XDG
+# file, so leaving it in place would override the new one.
+.gitconfig
+.gitconfig-personal
+.gitignore_global
+
+# Moved to ~/.config/zsh/.
+shell
+
+# Renamed in place.
+.claude/output-styles/reply-style.md
+.config/kanata/canary.kbd
+.config/oh-my-posh/oh-my-posh.json

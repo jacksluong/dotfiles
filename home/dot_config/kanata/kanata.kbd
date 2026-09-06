@@ -1,0 +1,342 @@
+;; Kanata configuration for MacBook - Canary-based layout based on ZSA Voyager keymap
+
+(defcfg
+  process-unmapped-keys yes
+  danger-enable-cmd yes
+  sequence-timeout 2000
+  sequence-input-mode visible-backspaced
+  sequence-backtrack-modcancel yes
+)
+
+;; Source layer - standard MacBook layout
+(defsrc
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft
+  fn   lctl lalt lmet           spc            rmet ralt left down up rght
+)
+
+(defvar
+  hrm-timeout      300
+  combo-timeout    60
+  tap-flow-timeout 110
+
+  ;; Variables used to implement chordal hold for home row mods
+  ;; Left-hand non-HRM keys in defsrc
+  lh-press   (q w e r t z x c v b)
+  ;; Left-hand HRM keys in defsrc
+  lh-release (a s d f g)
+
+  ;; Right-hand non-HRM keys in defsrc
+  rh-press   (y u i o p n m , . /)
+  ;; Right-hand HRM keys in defsrc
+  rh-release (h j k l ;)
+)
+
+;; Aliases for cleaner keymap
+(defalias
+  ;; Hyper key
+  H (multi lsft lctl lalt lmet)
+  H-1 (multi lsft lctl lalt lmet 1)
+  H-2 (multi lsft lctl lalt lmet 2)
+  H-3 (multi lsft lctl lalt lmet 3)
+  H-4 (multi lsft lctl lalt lmet 4)
+  H-5 (multi lsft lctl lalt lmet 5)
+  H-6 (multi lsft lctl lalt lmet 6)
+  H-7 (multi lsft lctl lalt lmet 7)
+  H-8 (multi lsft lctl lalt lmet 8)
+  H-9 (multi lsft lctl lalt lmet 9)
+  H-0 (multi lsft lctl lalt lmet 0)
+  H-l (multi lsft lctl lalt lmet left)
+  H-r (multi lsft lctl lalt lmet right)
+  H-d (multi lsft lctl lalt lmet down)
+  H-u (multi lsft lctl lalt lmet up)
+  H-z (multi lsft lctl lalt lmet z)
+
+  ;; Layer access
+  bas (layer-switch base)
+  num (layer-while-held numbers)
+  arr (layer-while-held arrows)
+  lch (layer-while-held launcher)
+  nav (layer-while-held navcode)
+  sys (tap-dance 150 ((layer-switch system) (layer-switch nohrm)))
+
+  ;; Mac-specific shortcuts
+  und M-z
+  cut M-x
+  cop M-c
+  pas M-v
+  sel M-a
+  loc C-M-q
+
+  ;; Mouse layer
+  tbo S-M-t
+  tbc S-M-w
+  tbr M-r
+  des f11
+  alw C-up
+  apw C-down
+  ss  S-M-4
+  ss+ S-M-5
+  zm  @H-z
+
+  ;; Arrows layer
+  cl C-left
+  ad A-down
+  au A-up
+  cr C-rght
+  al A-left
+  ar A-rght
+  ml M-left
+  md M-down
+  mu M-up
+  mr M-rght
+
+  ;; Num+Sym layer
+  ~ S-grv
+  : S-;
+  ! S-1
+  _ S--
+  { S-[
+  } S-]
+  ^ S-6
+  | S-\
+  & S-7
+  @ S-2
+  % S-5
+  # S-3
+  $ S-4
+  * S-8
+  + S-=
+  lp S-9
+  rp S-0
+
+  ;; Launcher layer
+  rc1 (macro M-spc esc M-spc M-1)  ;; Raycast favorited app 1
+  rc2 (macro M-spc esc M-spc M-2)  ;; Raycast favorited app 2
+
+  ;; Nav + code layer
+  aml A-M-left
+  amd A-M-down
+  amu A-M-up
+  amr A-M-rght
+  cuf M-S-]  ;; code unfold
+  cfo M-S-[  ;; code fold
+  vwr (macro esc S-; w ret)
+  vqt (macro S-; q ret)
+
+  ;; Caps word toggle
+  cpw (caps-word 2000)
+)
+
+;; Home row mods and tap flow implementation
+(deffakekeys
+  to-base (layer-switch base)
+)
+(defalias
+  .tp (multi
+    (layer-switch typing)
+    (on-idle-fakekey to-base tap $tap-flow-timeout)
+  )
+
+  ;; Home row mods with chordal hold
+  c (tap-hold-release-tap-keys-release $hrm-timeout $hrm-timeout (multi c @.tp) lsft $lh-press $lh-release)
+  r (tap-hold-release-tap-keys-release $hrm-timeout $hrm-timeout (multi r @.tp) lctl $lh-press $lh-release)
+  s (tap-hold-release-tap-keys-release $hrm-timeout $hrm-timeout (multi s @.tp) lalt $lh-press $lh-release)
+  t (tap-hold-release-tap-keys-release $hrm-timeout $hrm-timeout (multi t @.tp) lmet $lh-press $lh-release)
+  g (tap-hold-release-tap-keys-release $hrm-timeout $hrm-timeout (multi g @.tp) @H   $lh-press $lh-release)
+  m (tap-hold-release-tap-keys-release $hrm-timeout $hrm-timeout (multi m @.tp) @H   $rh-press $rh-release)
+  n (tap-hold-release-tap-keys-release $hrm-timeout $hrm-timeout (multi n @.tp) rmet $rh-press $rh-release)
+  e (tap-hold-release-tap-keys-release $hrm-timeout $hrm-timeout (multi e @.tp) ralt $rh-press $rh-release)
+  i (tap-hold-release-tap-keys-release $hrm-timeout $hrm-timeout (multi i @.tp) rctl $rh-press $rh-release)
+  a (tap-hold-release-tap-keys-release $hrm-timeout $hrm-timeout (multi a @.tp) rsft $rh-press $rh-release)
+
+  ;; Plain letter keys - these trigger the typing layer (for tap flow)
+  q (multi q @.tp)
+  l (multi l @.tp)
+  y (multi y @.tp)
+  p (multi p @.tp)
+  b (multi b @.tp)
+  z (multi z @.tp)
+  f (multi f @.tp)
+  o (multi o @.tp)
+  u (multi u @.tp)
+  ' (multi ' @.tp)
+
+  w (multi w @.tp)
+  j (multi j @.tp)
+  v (multi v @.tp)
+  d (multi d @.tp)
+  k (multi k @.tp)
+  x (multi x @.tp)
+  h (multi h @.tp)
+  / (multi / @.tp)
+  , (multi , @.tp)
+  . (multi . @.tp)
+)
+
+;; Input chords (aka combos in QMK), for both base layer and no-HRM layer
+(defalias
+  chq (chord combos q)
+  chl (chord combos l)
+  chw (chord combos w)
+  chj (chord combos j)
+  chv (chord combos v)
+  chd (chord combos d)
+  chh (chord combos h)
+  ch/ (chord combos /)
+  ch, (chord combos ,)
+  ch. (chord combos .)
+
+  nhq (chord lcombos q)
+  nhl (chord lcombos l)
+  nhw (chord lcombos w)
+  nhj (chord lcombos j)
+  nhv (chord lcombos v)
+  nhd (chord lcombos d)
+  nhh (chord lcombos h)
+  nh/ (chord lcombos /)
+  nh, (chord lcombos ,)
+  nh. (chord lcombos .)
+)
+
+(defchords combos $combo-timeout
+  (q    ) @q
+  (l    ) @l
+  (w    ) @w
+  (j    ) @j
+  (v    ) @v
+  (d    ) @d
+  (h    ) @h
+  (,    ) @,
+  (.    ) @.
+  (/    ) @/
+
+  (q l  ) esc
+  (w .  ) @cpw
+  (j v  ) tab
+  (j v d) (one-shot 3000 (layer-while-held launcher))
+  (h /  ) (one-shot-release 3000 (layer-while-held modnums))
+  (/ ,  ) A-bspc
+  (/ , .) M-bspc
+
+  (w j  ) (one-shot 3000 (layer-while-held numbers))
+  (, .  ) (one-shot 3000 (layer-while-held numbers))
+)
+
+;; No-HRM layer chords - identical multi-key combos, plain single-key output
+(defchords lcombos $combo-timeout
+  (q    ) q
+  (l    ) l
+  (w    ) w
+  (j    ) j
+  (v    ) v
+  (d    ) d
+  (h    ) h
+  (,    ) ,
+  (.    ) .
+  (/    ) /
+
+  (q l  ) esc
+  (w .  ) @cpw
+  (j v  ) tab
+  (j v d) (one-shot 3000 (layer-while-held launcher))
+  (h /  ) (one-shot-release 3000 (layer-while-held modnums))
+  (/ ,  ) A-bspc
+  (/ , .) M-bspc
+
+  (w j  ) (one-shot 3000 (layer-while-held numbers))
+  (, .  ) (one-shot 3000 (layer-while-held numbers))
+)
+
+;; Layer 0a - Base layer (Canary with home row mods)
+(deflayer base
+  _    brdn brup mctl sls  dtn  dnd  prev pp   next mute vold volu
+  @sys 1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  del  @chq @chl @y   @p   @b   @z   @f   @o   @u   @'   =    _    _
+  lsft @c   @r   @s   @t   @g   @m   @n   @e   @i   @a   rsft _
+  grv  @chw @chj @chv @chd @k   @x   @chh @ch/ @ch, @ch. -
+  lrld lctl lalt @arr           spc            bspc _    left down up rght
+)
+
+;; Layer 0b - Typing layer
+(deflayer typing
+  _    _    _    _    _    _    _    _    _    _    _    _    _
+  @sys 1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  del  @chq @chl y    p    b    z    f    o    u    '    =    _    _
+  lsft c    r    s    t    g    m    n    e    i    a    rsft _
+  grv  @chw @chj @chv @chd k    x    @chh @ch/ @ch, @ch. -
+  lrld lctl lalt @arr           spc            bspc _    left down up rght
+)
+
+;; Layer 1 - Arrows & editing
+(deflayer arrows
+  _    _    _    _    _    _    _    _    _    _    _    _    _
+  XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX
+  XX   XX   f11  @alw @ss  XX   XX   @cl  @ad  @au  @cr  XX   XX   XX
+  XX   @und @zm  @nav lsft @ss+ @al  left down up   rght @ar  XX
+  XX   @sel @cut @cop @pas XX   XX   @ml  @md  @mu  @mr  XX
+  _    _    _    _              _              _    _    _    _    _    _
+)
+
+;; Layer 2 - Numbers & symbols
+(deflayer numbers
+  _    _    _    _    _    _    _    _    _    _    _    _    _
+  XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX
+  XX   \    ;    @{   @}   @^   @~   4    5    6    @*   @%   XX   XX
+  XX   @!   @#   @lp  @rp  @@   @:   1    2    3    0    @+   XX
+  XX   @|   @&   [    ]    XX   @$   7    8    9    _    _
+  _    _    _    /              _              _    _    _    _    _    _
+)
+
+;; Layer 3 - App/Tab launcher
+(deflayer launcher
+  _    _    _    _    _    _    _    _    _    _    _    _    _
+  XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX
+  XX   XX   M-6  M-5  M-4  XX   XX   @H-4 @H-5 @H-6 XX   XX   XX   XX
+  XX   M-0  M-3  M-2  M-1  XX   @rc1 @H-1 @H-2 @H-3 @H-0 XX   XX
+  XX   XX   M-9  M-8  M-7  XX   XX   @H-7 @H-8 @H-9 @rc2 XX
+  _    _    _    _              _              _    _    _    _    _    _
+)
+
+;; Layer 4 - System
+(deflayer system
+  _    _    _    _    _    _    _    _    _    _    _    _    _
+  @bas f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  XX
+  XX   XX   XX   XX   XX   XX   XX   prev pp   next XX   XX   XX   XX
+  XX   XX   XX   XX   XX   XX   XX   vold volu mute XX   XX   XX
+  XX   XX   XX   XX   XX   XX   XX   brdn brup M--  M-=  XX
+  _    _    _    _              _              _    _    _    _    _    _
+)
+
+;; Layer 5 - Navigation & code
+(deflayer navcode
+  _    _    _    _    _    _    _    _    _    _    _    _    _
+  XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX
+  XX   XX   XX   XX   XX   XX   XX   @vwr @vqt @cfo @cuf XX   XX   XX
+  XX   XX   XX   XX   XX   XX   M-d  M-[  @H-l @H-r M-]  XX   XX
+  XX   XX   XX   XX   XX   XX   XX   @aml @amd @amu @amr XX
+  _    _    _    _              _              _    _    _    _    _    _
+)
+
+;; Layer 6 - Numbers with modifiers
+(deflayer modnums
+  _    _    _    _    _    _    _    _    _    _    _    _    _
+  XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX
+  XX   XX   XX   XX   XX   XX   XX   4    5    6    XX   XX   XX   XX
+  XX   lsft lctl lalt lmet XX   XX   1    2    3    0    XX   XX
+  XX   XX   XX   XX   XX   XX   XX   7    8    9    XX   XX
+  _    _    _    _              _              _    _    _    _    _    _
+)
+
+;; Layer 7 - No-HRM layer
+(deflayer nohrm
+  _    _    _    _    _    _    _    _    _    _    _    _    _
+  @bas 1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  del  @nhq @nhl y    p    b    z    f    o    u    '    =    _    _
+  lsft c    r    s    t    g    m    n    e    i    a    rsft _
+  grv  @nhw @nhj @nhv @nhd k    x    @nhh @nh/ @nh, @nh. -
+  lrld lctl lalt @arr           spc            bspc _    left down up rght
+)
