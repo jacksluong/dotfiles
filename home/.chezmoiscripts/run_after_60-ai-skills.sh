@@ -5,9 +5,10 @@
 set -euo pipefail
 
 clone="$HOME/Developer/skills"
-repo="$clone/skills"
+repo="$clone"
 
 if [[ ! -d "$repo" ]]; then
+  echo "==> Skipping skill links: no clone at $repo" >&2
   exit 0
 fi
 
