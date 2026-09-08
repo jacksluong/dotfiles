@@ -23,6 +23,7 @@ if [[ $- == *i* ]]; then
     alias lg='git lg'
     alias cm='chezmoi'
     alias claued='claude'
+    alias cluade='claude'
 
     # built-in cd unless called with no arguments, which triggers interactive navigation
     cd() {
