@@ -534,5 +534,32 @@
     "unbind": {
       "ctrl-`": "terminal_panel::Toggle"
     }
+  },
+  {
+    "context": "Pane",
+    "unbind": {
+      "alt-cmd-right": "pane::ActivateNextItem"
+    }
+  },
+  {
+    "context": "Pane",
+    "unbind": {
+      "alt-cmd-left": "pane::ActivatePreviousItem"
+    }
+  },
+  {
+    "bindings": {
+      "alt-cmd-left": "editor::ExpandExcerptsUp"
+    }
+  },
+  {
+    "bindings": {
+      "alt-cmd-right": "editor::ExpandExcerptsDown"
+    }
+  },
+  {
+    "bindings": {
+      "cmd-backspace": "keymap_editor::DeleteBinding"
+    }
   }
 ]
