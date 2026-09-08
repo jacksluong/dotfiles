@@ -82,8 +82,7 @@ Multiple files are written to `~/.claude/`:
 - `statusline-command.sh` - custom status line showing model, context use,
   rate limits, and diff size
 
-Setup also installs the `playwright-cli` agent skill at
-`~/.claude/skills/playwright-cli`, which is not tracked here.
+Setup also installs the `playwright-cli` and `impeccable` agent skills globally.
 
 ### AI skills
 
