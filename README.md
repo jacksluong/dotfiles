@@ -3,7 +3,7 @@
 My macOS setup, managed with [chezmoi](https://www.chezmoi.io/): shell, git,
 keyboard remapping, Claude Code, and app settings. I use this primarily for
 syncing configurations across machines (e.g., app settings, shell config), but
-it serves also to streamline the setup of new machines.
+it also serves to streamline the setup of new machines.
 
 ## Setup
 
@@ -61,13 +61,15 @@ key plus a personal key on work machines) and added to GitHub via `gh`.
 ### Repos
 
 On personal machines, my repos are cloned into `~/Developer`. This directory
-is where I keep all my active personal projects and code.
+is where I keep all of my active personal projects and code.
 
 ### Keyboard
 
 [kanata](https://github.com/jtroo/kanata) remaps the built-in MacBook
 keyboard to a Canary layout with home-row mods and multiple layers. The config
-is `home/dot_config/kanata/kanata.kbd`.
+can be found [here](https://github.com/jacksluong/dotfiles/blob/main/home/dot_config/kanata/kanata.kbd),
+which has full parity with [my split keyboard layout](https://configure.zsa.io/voyager/layouts/JRoWm/latest/0)
+for my Voyager).
 
 [kanata-tray](https://github.com/rszyma/kanata-tray) runs it in the menu bar,
 with it automatically started on login. Setup installs the sudoers rule it
@@ -99,8 +101,10 @@ directories the harnesses read:
 - `~/.claude/skills` for Claude Code
 - `~/.agents/skills` for Codex
 
-Edit a skill in `~/Developer/skills` and the change is live in the next agent
-session; commit and push to share it with the other machines.
+When a skill is edited in `~/Developer/skills`, the change is live in the next
+agent session. I also have the [Impeccable](https://impeccable.style/) and
+[Playwright CLI](https://playwright.dev/) skills installed globally, but they
+are installed via script and not tracked by `chezmoi`.
 
 ### Editor
 
@@ -156,7 +160,7 @@ Each `chezmoi apply` then goes through three phases:
 
 1. **`before` scripts.** These scripts live in `home/.chezmoiscripts/` and run
    before the apply itself, in alphabetical order. In this repo, they install
-   Homebrew, set up tools that ship their own installer (Claude Code, pnpm,
+   Homebrew, set up tools that ship their own installer (e.g., Claude Code, pnpm,
    playwright-cli), set up SSH keys, and do other things.
 2. **The apply.** I have chezmoi track an external git repo that contains my AI
    skills, so that gets cloned. Then, every managed file is rendered and written
@@ -164,9 +168,7 @@ Each `chezmoi apply` then goes through three phases:
    app config (Zed, Claude Code, etc.), and more.
 3. **`after` scripts.** More scripts that live in `home/.chezmoiscripts/` but
    run after the apply. Their actions include but are not limited to: install
-   vim plugins, clone my repos, set up my keyboard to use my own keyboard
-   remapping (matches [this](https://configure.zsa.io/voyager/layouts/JRoWm/latest/0),
-   uses the [Canary layout](https://github.com/Apsu/Canary)).
+   vim plugins, clone my repos, and set up my keyboard as described above.
 
 > Note: `home/` is the source directory for `$HOME`, which determines where
   files are written. Nothing outside of `home/` is managed by chezmoi.
