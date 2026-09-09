@@ -1,12 +1,14 @@
 # dotfiles
 
 My macOS setup, managed with [chezmoi](https://www.chezmoi.io/): shell, git,
-keyboard remapping, Claude Code, and app settings.
+keyboard remapping, Claude Code, and app settings. I use this primarily for
+syncing configurations across machines (e.g., app settings, shell config), but
+it serves also to streamline the setup of new machines.
 
 ## Setup
 
 All it takes is one command, which can be run on a brand new Mac with nothing
-installed:
+installed or an existing machine:
 
 ```sh
 sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply \
@@ -70,7 +72,7 @@ is `home/dot_config/kanata/kanata.kbd`.
 [kanata-tray](https://github.com/rszyma/kanata-tray) runs it in the menu bar,
 with it automatically started on login. Setup installs the sudoers rule it
 needs, but the Input Monitoring and Accessibility permissions must be granted
-by hand.
+manually.
 
 ### Claude Code
 
@@ -147,3 +149,36 @@ chezmoi update   # pull this repo and the skills repo, then apply
 
 Edit files in this repo, or edit the deployed file and re-add it. Setup
 scripts are idempotent.
+
+## How it works
+
+Each `chezmoi apply` then goes through three phases:
+
+1. **`before` scripts.** These scripts live in `home/.chezmoiscripts/` and run
+   before the apply itself, in alphabetical order. In this repo, they install
+   Homebrew, set up tools that ship their own installer (Claude Code, pnpm,
+   playwright-cli), set up SSH keys, and do other things.
+2. **The apply.** I have chezmoi track an external git repo that contains my AI
+   skills, so that gets cloned. Then, every managed file is rendered and written
+   to its place in `$HOME`. This includes all the files related to shell setup,
+   app config (Zed, Claude Code, etc.), and more.
+3. **`after` scripts.** More scripts that live in `home/.chezmoiscripts/` but
+   run after the apply. Their actions include but are not limited to: install
+   vim plugins, clone my repos, set up my keyboard to use my own keyboard
+   remapping (matches [this](https://configure.zsa.io/voyager/layouts/JRoWm/latest/0),
+   uses the [Canary layout](https://github.com/Apsu/Canary)).
+
+> Note: `home/` is the source directory for `$HOME`, which determines where
+  files are written. Nothing outside of `home/` is managed by chezmoi.
+
+There are chezmoi prefixes that have special meanings, such as `private_` and
+`dot_`. The name of a script in `home/.chezmoiscripts/` determines when it runs:
+
+| Prefix | When it runs |
+|---|---|
+| `run_once_` | once per machine, tracked by the script's contents |
+| `run_onchange_` | again whenever the script's contents change |
+| `run_` | on every apply |
+
+Generally, most of my chezmoi scripts are only involved in setting up a new
+machine.
