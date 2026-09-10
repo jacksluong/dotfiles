@@ -63,24 +63,17 @@
   nav (layer-while-held navcode)
   sys (tap-dance 150 ((layer-switch system) (layer-switch nohrm)))
 
-  ;; Mac-specific shortcuts
+  ;; System shortcuts
   und M-z
   cut M-x
   cop M-c
   pas M-v
   sel M-a
-  loc C-M-q
 
-  ;; Mouse layer
-  tbo S-M-t
-  tbc S-M-w
-  tbr M-r
-  des f11
-  alw C-up
-  apw C-down
+  alw C-up    ;; All windows
+  apw C-down  ;; App windows
   ss  S-M-4
   ss+ S-M-5
-  zm  @H-z
 
   ;; Arrows layer
   cl C-left
@@ -276,7 +269,7 @@
   _    _    _    _    _    _    _    _    _    _    _    _    _
   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX
   XX   XX   f11  @alw @ss  XX   XX   @cl  @ad  @au  @cr  XX   XX   XX
-  XX   @und @zm  @nav lsft @ss+ @al  left down up   rght @ar  XX
+  XX   @und M-k  @nav lsft @ss+ @al  left down up   rght @ar  XX
   XX   @sel @cut @cop @pas XX   XX   @ml  @md  @mu  @mr  XX
   _    _    _    _              _              _    _    _    _    _    _
 )
