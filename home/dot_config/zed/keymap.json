@@ -558,6 +558,7 @@
     }
   },
   {
+    "context": "!Editor",
     "bindings": {
       "cmd-backspace": "keymap_editor::DeleteBinding"
     }
