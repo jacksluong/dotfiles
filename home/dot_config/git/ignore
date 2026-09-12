@@ -34,3 +34,6 @@ vendor/
 # Claude
 **/.claude/settings.local.json
 worktrees/
+
+# Playwright
+.playwright-cli/
