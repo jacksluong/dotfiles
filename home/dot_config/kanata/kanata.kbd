@@ -106,10 +106,6 @@
   lp S-9
   rp S-0
 
-  ;; Launcher layer
-  rc1 (macro M-spc esc M-spc M-1)  ;; Raycast favorited app 1
-  rc2 (macro M-spc esc M-spc M-2)  ;; Raycast favorited app 2
-
   ;; Nav + code layer
   aml A-M-left
   amd A-M-down
@@ -288,9 +284,9 @@
 (deflayer launcher
   _    _    _    _    _    _    _    _    _    _    _    _    _
   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX
-  XX   XX   M-6  M-5  M-4  XX   XX   @H-4 @H-5 @H-6 XX   XX   XX   XX
-  XX   M-0  M-3  M-2  M-1  XX   @rc1 @H-1 @H-2 @H-3 @H-0 XX   XX
-  XX   XX   M-9  M-8  M-7  XX   XX   @H-7 @H-8 @H-9 @rc2 XX
+  XX   XX   XX   XX   XX   XX   XX   @H-4 @H-5 @H-6 XX   XX   XX   XX
+  XX   XX   XX   XX   XX   XX   XX   @H-1 @H-2 @H-3 @H-0 XX   XX
+  XX   XX   XX   XX   XX   XX   XX   @H-7 @H-8 @H-9 XX   XX
   _    _    _    _              _              _    _    _    _    _    _
 )
 
