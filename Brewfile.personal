@@ -1,12 +1,16 @@
-# Personal-machine-only GUI apps. `chezmoi init` asks once ("Install
+# Personal-machine-only apps. `chezmoi init` asks once ("Install
 # personal apps?") so a work machine can skip them. The core Brewfile holds
 # everything that should always be installed. The adopt args make brew take
 # over a matching app that was installed by hand instead of failing with
 # "already an App at /Applications/...".
 
+# --- Formulae ---
+# Mac App Store CLI, used by .chezmoiscripts/run_onchange_after_65-mas-apps.sh.tmpl
+brew "mas"
+
 # --- Casks ---
+# Craft is installed from the Mac App Store instead, see the mas-apps script
 cask "iterm2", args: { adopt: true }
-cask "craft", args: { adopt: true }
 cask "zed", args: { adopt: true }
 cask "spotify", args: { adopt: true }
 cask "steam", args: { adopt: true }

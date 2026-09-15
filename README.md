@@ -26,7 +26,7 @@ this will:
 - Write every managed file
 - Set up symlinks for personal AI skills repo
 - Set up keyboard remapping (kanata)
-- Install Mac apps
+- Install Mac App Store apps
 
 ## Overview
 
@@ -117,27 +117,44 @@ also synced via `chezmoi`.
 Zed rewrites both files when settings change in the UI, so `chezmoi re-add`
 pulls those changes back into the repo.
 
-### Packages
+### Homebrew
 
-`Brewfile` installs on every machine: CLI tools (`git`, `fd`, `ripgrep`,
+`Brewfile` installs on every machine CLI tools (`git`, `fd`, `ripgrep`,
 `bat`, `eza`, `fzf`, `jq`, `gh`, `pyenv`, `kanata`, `chezmoi`), zsh plugins,
-Raycast, and the Fira Code Nerd Font. `Brewfile.personal` adds Mac apps
-(iTerm2, Craft, Zed, Spotify, Steam, Spark, CleanShot) on personal
-machines only.
+Raycast, and the Fira Code Nerd Font (gotta love ligatures!).
 
-However, this only installs missing packages. Upgrading them requires
-manually running `brew upgrade`.
+`Brewfile.personal` adds `mas` plus some Mac apps (iTerm2, Zed, Spotify,
+Steam, Spark, CleanShot) that will only install on personal machines.
 
-### App settings
+### Other installations
+
+Aside from the apps installed by Homebrew, there are some apps and Safari
+extensions that are only available on the Mac App Store, which this setup
+installs using [mas](https://github.com/mas-cli/mas) (on personal machines
+only):
+
+| App | Type |
+|---|---|
+| Craft | App |
+| Xcode | App |
+| uBlock Origin Lite | Safari extension |
+| TabBack | Safari extension |
+| Capital One Shopping | Safari extension |
+| Hush | Safari extension |
+
+### Configs and app settings
 
 Some apps have no non-interactive import, so their settings exports live in
 `imports/` and are applied by hand:
 
-- `imports/settings.itermexport` - iTerm2 profiles, keys, and the rest of
-  its settings, via Settings > General > Settings > Import All Settings and
-  Data
-- `imports/raycast.rayconfig` - Raycast settings, via Raycast > Settings >
-  Advanced > Import Settings
+- `imports/iterm/keybindings.itermkeymap` and `imports/iterm/profiles.json` -
+  iTerm2 key bindings and profiles
+- `imports/raycast/raycast.rayconfig` - Raycast settings, via Raycast >
+  Settings > Advanced > Import Settings
+
+`imports/macos/symbolichotkeys.plist` (System Settings > Keyboard > Keyboard
+Shortcuts bindings) is imported by a setup script, but the App Shortcuts tab
+within that needs me to put in the shortcuts.
 
 Also managed are `~/.vimrc` (bootstraps vim-plug), `~/.config/git/ignore`,
 `~/.hushlogin`, and the oh-my-posh theme.

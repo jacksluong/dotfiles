@@ -167,7 +167,6 @@
     "claude-acp": {
       "favorite_config_option_values": {
         "model": [
-          "claude-fable-5-1[1m]",
           "opus[1m]"
         ]
       },

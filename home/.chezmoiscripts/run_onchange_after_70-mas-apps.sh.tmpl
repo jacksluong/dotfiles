@@ -1,0 +1,68 @@
+{{ if .personal -}}
+#!/bin/bash
+#
+# Installs the Mac App Store apps via `mas`, skipping any already present.
+set -euo pipefail
+
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+if ! command -v mas &>/dev/null; then
+  echo "mas-apps: mas not on PATH, skipping Mac App Store apps" >&2
+  exit 0
+fi
+
+# App IDs come from `mas list` on a machine that already has the app
+apps=(
+  "1477110326:Capital One Shopping"
+  "1487937127:Craft"
+  "1544743900:Hush"
+  "361285480:Keynote"
+  "361304891:Numbers"
+  "361309726:Pages"
+  "1660506599:TabBack"
+  "6745342698:uBlock Origin Lite"
+  "497799835:Xcode"
+)
+
+installed="$(mas list 2>/dev/null | awk '{print $1}')"
+
+missing=()
+for app in "${apps[@]}"; do
+  id="${app%%:*}"
+  if ! printf '%s\n' "$installed" | grep -qx "$id"; then
+    missing+=("$app")
+  fi
+done
+
+if [[ ${#missing[@]} -eq 0 ]]; then
+  echo "==> All Mac App Store apps are already installed"
+  exit 0
+fi
+
+echo
+echo "==> Installing ${#missing[@]} Mac App Store app(s) (needs sudo, and the App Store must be signed in):"
+for app in "${missing[@]}"; do
+  echo "      ${app#*:}"
+done
+
+# mas can only install what the signed-in Apple ID already owns, and there is
+# no way to sign in from the CLI
+if [[ -t 0 ]]; then
+  echo
+  read -r -p "    Open the App Store and sign in, then press Return (Ctrl-C to abort): " _
+fi
+
+failed=()
+for app in "${missing[@]}"; do
+  id="${app%%:*}"
+  name="${app#*:}"
+  echo "==> Installing $name"
+  sudo mas install "$id" || failed+=("$name")
+done
+
+if [[ ${#failed[@]} -gt 0 ]]; then
+  echo "==> Could not install: ${failed[*]}" >&2
+  echo "    Sign into the App Store, confirm each app is in the Apple ID's" >&2
+  echo "    purchase history, then re-run \`chezmoi apply\`." >&2
+fi
+{{- end -}}
