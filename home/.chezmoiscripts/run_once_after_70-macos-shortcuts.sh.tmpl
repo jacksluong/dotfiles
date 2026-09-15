@@ -1,0 +1,18 @@
+#!/bin/bash
+#
+# Imports the System Settings > Keyboard > Keyboard Shortcuts bindings captured
+# in imports/macos/. App Shortcuts are not covered; see the manual steps script.
+set -euo pipefail
+
+plist="{{ .chezmoi.workingTree }}/imports/macos/symbolichotkeys.plist"
+
+if [[ ! -f "$plist" ]]; then
+  echo "==> No symbolichotkeys.plist in imports/macos, skipping system shortcuts" >&2
+  exit 0
+fi
+
+echo "==> Importing system keyboard shortcuts"
+defaults import com.apple.symbolichotkeys "$plist"
+
+# Rereads the preference caches so most bindings take effect without having to log out.
+/System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u || true
