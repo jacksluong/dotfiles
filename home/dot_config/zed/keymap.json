@@ -562,5 +562,23 @@
     "bindings": {
       "cmd-backspace": "keymap_editor::DeleteBinding"
     }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "cmd-r": "projects::OpenRecent"
+    }
+  },
+  {
+    "context": "Workspace",
+    "unbind": {
+      "ctrl-r": "projects::OpenRecent"
+    }
+  },
+  {
+    "context": "GitPanel",
+    "unbind": {
+      "cmd-2": "git_panel::ActivateHistoryTab"
+    }
   }
 ]
