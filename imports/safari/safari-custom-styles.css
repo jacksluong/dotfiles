@@ -1,0 +1,16 @@
+/* Hide undesirable elements/aspects of YouTube's interface */
+ytd-app {
+  #columns #secondary, /* Recommended videos while on a video */
+  ytd-browse[page-subtype="home"] #header, /* Pills strip at top of homepage */
+  ytd-rich-section-renderer, /* Shorts section on homepage */
+  #video-preview, /* Video auto-play on homepage */
+  ytd-browse[page-subtype="home"] ytd-continuation-item-renderer /* Infinite scrolling on homepage */
+  {
+    display: none !important;
+  }
+}
+
+/* Disable infinite scrolling on Reddit */
+shreddit-feed > :nth-child(n+26) {
+  display: none !important;
+}
