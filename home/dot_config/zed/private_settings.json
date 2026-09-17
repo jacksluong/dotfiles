@@ -7,6 +7,10 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "close_panel_on_toggle": true,
+  "active_pane_modifiers": {
+    "inactive_opacity": 0.6
+  },
   "agent_buffer_font_family": "Fira Code",
   "agent_buffer_font_size": 12.5,
   "gutter": {

@@ -7,8 +7,8 @@ it also serves to streamline the setup of new machines.
 
 ## Setup
 
-All it takes is one command, which can be run on a brand new Mac with nothing
-installed or an existing machine:
+All it takes is one command, which can be run on an existing computer or a
+brand new Mac with nothing installed:
 
 ```sh
 sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply \
@@ -21,7 +21,7 @@ this will:
 
 - Set up SSH keys for GitHub
 - Install Homebrew, its packages, and Mac apps
-- Create and populates `~/Developer`
+- Create and populate `~/Developer`
 - Install remaining tools (e.g., Claude Code, pnpm)
 - Write every managed file
 - Set up symlinks for personal AI skills repo
@@ -32,16 +32,17 @@ this will:
 
 ### Shell
 
-zsh with [oh-my-posh](https://ohmyposh.dev), autosuggestions, and syntax
-highlighting. `~/.zshrc` also wires up pyenv, pnpm, and fzf for history search.
-
-Helper functions live in `home/dot_config/zsh/` and are sourced at startup:
+zsh with [oh-my-posh](https://ohmyposh.dev) (for that sweet prompt customization),
+[autosuggestions](https://github.com/zsh-users/zsh-autosuggestions), and [syntax
+highlighting](https://github.com/zsh-users/zsh-syntax-highlighting). `~/.zshrc`
+also wires up pyenv, pnpm, fzf for history search, and all of my custom shell
+functions, which are described below.
 
 | File | What it adds |
 |---|---|
 | `git.sh` | `commit`, `push`, `switch`, `clone`, `merge`, `stash` and friends, wrapping git with prompts and safe defaults |
-| `aliases.sh` | `g`, `sw`, `cl`, `ls` via eza, `rm` via trash, and a `cd` that navigates interactively when called with no arguments |
-| `icd.sh` | the interactive `cd` picker |
+| `aliases.sh` | `g` for `git`, `sw` for git switching, `cl` for claude, `rm` via `trash`, a `cd` that navigates interactively when called with no arguments, etc. |
+| `icd.sh` | the interactive `cd` picker (see [gist](https://gist.github.com/jacksluong/744ee3e30f6fc05a5563353e6db28aca)) |
 | `helpers.sh` | shared prompt/validation helpers used by the others |
 
 Machine-specific config that shouldn't be synced goes in `~/.zshrc.local`,
@@ -50,9 +51,8 @@ which `.zshrc` sources if present. It stays untracked.
 ### Git and SSH
 
 `~/.config/git/config` is templated per machine. Personal machines commit
-with the personal email. Work machines use the work email, plus routing for
-repos under the personal GitHub account so they keep canonical remote URLs
-but authenticate and commit as personal.
+with the personal email, and work machines use the work email except for
+repos under the personal GitHub account.
 
 SSH keys are generated on first apply (one key on personal machines, a work
 key plus a personal key on work machines) and added to GitHub via `gh`.
@@ -66,8 +66,8 @@ is where I keep all of my active personal projects and code.
 ### Keyboard
 
 [kanata](https://github.com/jtroo/kanata) remaps the built-in MacBook
-keyboard to a Canary layout with home-row mods and multiple layers. The config
-can be found [here](https://github.com/jacksluong/dotfiles/blob/main/home/dot_config/kanata/kanata.kbd),
+keyboard to a Canary layout with home-row mods and multiple layers using
+[my config](https://github.com/jacksluong/dotfiles/blob/main/home/dot_config/kanata/kanata.kbd),
 which has full parity with [my split keyboard layout](https://configure.zsa.io/voyager/layouts/JRoWm/latest/0)
 for my Voyager).
 
@@ -85,8 +85,6 @@ Multiple files are written to `~/.claude/`:
 - `output-styles/custom-concise.md` - the custom output style for Claude Code
 - `statusline-command.sh` - custom status line showing model, context use,
   rate limits, and diff size
-
-Setup also installs the `playwright-cli` and `impeccable` agent skills globally.
 
 ### AI skills
 
@@ -108,7 +106,7 @@ are installed via script and not tracked by `chezmoi`.
 
 ### Editor
 
-The settings and keybindings for my code editor,[Zed](https://zed.dev), are
+The settings and keybindings for my code editor, [Zed](https://zed.dev), are
 also synced via `chezmoi`.
 
 - `settings.json` - theme, fonts, agent panel, git, and terminal settings
