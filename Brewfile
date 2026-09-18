@@ -1,7 +1,8 @@
-# oh-my-posh's formula lives in its own tap and requires explicit trust
-# (see home/.chezmoiscripts/run_onchange_before_10-brew-bundle.sh.tmpl,
-# which taps + trusts it before running `brew bundle`).
-tap "jandedobbeleer/oh-my-posh"
+# Homebrew refuses to load non-official taps until they are trusted
+tap "jacksluong/tap", trusted: true
+tap "jandedobbeleer/oh-my-posh", trusted: true
+tap "artzainnn/tap", trusted: { casks: ["claudeusagebar"] }
+tap "vordenken/autopip", "https://github.com/vordenken/AutoPiP", trusted: { casks: ["autopip"] }
 
 # --- Formulae ---
 brew "chezmoi"
@@ -20,10 +21,12 @@ brew "zsh-syntax-highlighting"
 brew "pyenv"
 brew "pyenv-virtualenv"
 brew "kanata"
-brew "kanata-tray"
 
 # --- Casks ---
 # Personal-machine-only apps live in Brewfile.personal, installed only when
 # the `personal` chezmoi prompt was answered yes
-cask "raycast"
+cask "barnata", args: { adopt: true }
+cask "claudeusagebar", args: { adopt: true }
+cask "autopip", args: { adopt: true }
+cask "raycast", args: { adopt: true }
 cask "font-fira-code-nerd-font"

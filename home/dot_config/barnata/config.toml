@@ -1,0 +1,22 @@
+[app]
+show_dock_icon = false
+launch_at_login = true
+
+[defaults]
+autorestart_on_crash = true
+
+[presets."Default"]
+kanata_config = "~/.config/kanata/kanata.kbd"
+autorun = true
+
+[presets."Default".layer_icons]
+"*" = "keyboard"
+arrows = "arrow.up.and.down.and.arrow.left.and.right"
+base = "house.fill"
+launcher = "airplane.departure"
+modnums = "numbers.rectangle.fill"
+navcode = "chevron.left.forwardslash.chevron.right"
+nohrm = "a.square"
+numbers = "number.sign"
+system = "gearshape.fill"
+typing = "textformat"

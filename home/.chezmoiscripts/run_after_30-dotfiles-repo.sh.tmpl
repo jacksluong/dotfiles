@@ -9,8 +9,7 @@ if ! git -C "$repo" rev-parse --git-dir &>/dev/null; then
   exit 0
 fi
 
-# `chezmoi init` clones over HTTPS because no key exists that early, which
-# leaves pushes going through the credential helper instead of the SSH key
+# `chezmoi init` has to clone over HTTPS, so switch to SSH for pushing
 url="$(git -C "$repo" config --get remote.origin.url 2>/dev/null || true)"
 case "$url" in
   https://github.com/*)

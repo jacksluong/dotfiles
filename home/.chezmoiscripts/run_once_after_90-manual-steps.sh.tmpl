@@ -5,28 +5,16 @@ set -euo pipefail
 
 cat <<'EOF'
 
-A few things need to be finished by hand:
+Remaining actions:
 
-  * kanata: in System Settings > Privacy & Security, add BOTH `kanata` and
-    `kanata-tray` to BOTH Input Monitoring AND Accessibility (all four
-    toggles). The LaunchAgent and its sudoers rule are already installed, and
-    KeepAlive retries every 20s, so kanata starts on its own once all four
-    toggles are granted.
+  * Barnata: already launched. Open Preferences from its menu bar item and
+    grant all the necessary permissions.
 
-  * iTerm2: Settings > Keys > Key Bindings > Presets > Import, pick
-    {{ .chezmoi.workingTree }}/imports/iterm/keybindings.itermkeymap, then
-    Settings > Profiles > Other Actions > Import JSON Profiles, pick
-    {{ .chezmoi.workingTree }}/imports/iterm/profiles.json, then restart iTerm2.
+  * iTerm2, Raycast, and Safari: import their settings from
+    {{ .chezmoi.workingTree }}/imports, then restart iTerm2.
 
-  * Raycast: Settings > Advanced > Import Settings, pick
-    {{ .chezmoi.workingTree }}/imports/raycast/raycast.rayconfig.
-
-  * Safari: Settings > Advanced > Style sheet, pick
-    {{ .chezmoi.workingTree }}/imports/safari/safari-custom-styles.css.
-
-  * Keyboard shortcuts: everything under System Settings > Keyboard >
-    Keyboard Shortcuts is restored already, except the App Shortcuts tab.
-    Those need to be manually added:
+  * App Shortcuts: the rest of System Settings > Keyboard > Keyboard
+    Shortcuts is restored, but not App Shortcuts. Add these.
 
       All Applications   Hide Messages             ⌘⌥⌃⇧\
                          Show Fonts                ⌘⌥⌃⇧\
@@ -39,8 +27,5 @@ A few things need to be finished by hand:
                          Minimize                  ⌘⌥⌃⇧\
                          Minimize All              ⌘⌥⌃⇧\
                          Quit Safari               ⌘⌥⌃⇧\
-
-  * Restart your terminal to pick up the new shell
-    configuration.
 
 EOF

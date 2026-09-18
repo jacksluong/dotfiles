@@ -25,7 +25,7 @@ this will:
 - Install remaining tools (e.g., Claude Code, pnpm)
 - Write every managed file
 - Set up symlinks for personal AI skills repo
-- Set up keyboard remapping (kanata)
+- Set up keyboard remapping (kanata and Barnata)
 - Install Mac App Store apps
 
 ## Overview
@@ -71,10 +71,8 @@ keyboard to a Canary layout with home-row mods and multiple layers using
 which has full parity with [my split keyboard layout](https://configure.zsa.io/voyager/layouts/JRoWm/latest/0)
 for my Voyager).
 
-[kanata-tray](https://github.com/rszyma/kanata-tray) runs it in the menu bar,
-with it automatically started on login. Setup installs the sudoers rule it
-needs, but the Input Monitoring and Accessibility permissions must be granted
-manually.
+To enable easier kanata management via a menu bar icon, I use [Barnata](https://github.com/jacksluong/barnata),
+an app I created. The config is tracked by chezmoi.
 
 ### Claude Code
 
@@ -117,11 +115,12 @@ pulls those changes back into the repo.
 
 ### Homebrew
 
-`Brewfile` installs on every machine CLI tools (`git`, `fd`, `ripgrep`,
-`bat`, `eza`, `fzf`, `jq`, `gh`, `pyenv`, `kanata`, `chezmoi`), zsh plugins,
-Raycast, and the Fira Code Nerd Font (gotta love ligatures!).
+`Brewfile` installs on every machine CLI tools (`git`, `bat`, `fzf`, `gh`,
+`pyenv`, `kanata`, `chezmoi`, etc.), zsh plugins, a few apps (Barnata,
+ClaudeUsageBar, AutoPiP, Raycast), and the Fira Code Nerd Font (gotta love
+ligatures!).
 
-`Brewfile.personal` adds `mas` plus some Mac apps (iTerm2, Zed, Spotify,
+`Brewfile.personal` adds `mas` plus some more apps (iTerm2, Zed, Spotify,
 Steam, Spark, CleanShot) that will only install on personal machines.
 
 ### Other installations
