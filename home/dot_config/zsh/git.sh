@@ -371,7 +371,7 @@ commit() {
 
 # `push [<msg>] [-f]` to push to remote repo (after committing if <msg> is given)
 push() {
-    require_git_remote || return 1
+    require_git_repo || return 1
 
     local force_flag=""
     local args=()
@@ -387,6 +387,21 @@ push() {
             args+=("$arg")
         fi
     done
+
+    # Without a remote there is nothing to push, so offer a local commit instead
+    if ! has_remote; then
+        if (( ${#args[@]} == 0 )); then
+            echo "Error: no remote 'origin' configured"
+            return 1
+        fi
+
+        if ! confirm "No remote 'origin' configured. Commit without pushing?" y; then
+            return 1
+        fi
+
+        commit "${args[@]}"
+        return
+    fi
 
     # If force push is requested, check for divergence
     if [[ -n "$force_flag" ]]; then
