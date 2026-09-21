@@ -33,6 +33,10 @@ icd() {
     local is_bash=$([[ -n $BASH ]] && echo true || echo false)
     local is_zsh=$([[ -n $ZSH_NAME ]] && echo true || echo false)
 
+    # Arrays are 1-indexed in zsh but 0-indexed in bash; add to any 0-based index
+    local ARR_OFF=0
+    [[ $is_zsh = true ]] && ARR_OFF=1
+
     # Pre-compute terminal escape sequences for performance
     local _bold=$(tput bold)      # bold text
     local _dim=$(tput dim)        # dim/faint text
@@ -62,6 +66,7 @@ icd() {
 
     # Read a single keypress in zsh and translate it to a command name
     zsh_key_input() {
+        local key=''
         read -sk1 key
         if [[ $key = $'\e' ]]; then
             read -sk2 -t 0.1 key
@@ -72,6 +77,7 @@ icd() {
 
     # Read a single keypress in bash and translate it to a command name
     bash_key_input() {
+        local key=''
         IFS='' read -rsn1 key
         if [[ $key = $'\e' ]]; then
             read -rsn2 -t 0.1 key
@@ -81,6 +87,7 @@ icd() {
     }
 
     # Read a single keypress and translate it (auto-detects shell)
+    # Sets result in _key variable (avoids subshell)
     read_key() {
         if [[ $is_bash = true ]]; then
             bash_key_input
@@ -90,67 +97,63 @@ icd() {
     }
 
     # Convert raw key input into readable command names (enter, backspace, arrow keys, etc.)
+    # Sets result in _key variable (avoids subshell)
     translate_input() {
         # args: keyboard input
         case $1 in
-            $'\n'|'')      echo enter;;
-            $'\177'|$'\b') echo backspace;;
-            $'\t')         echo tab;;
-            $'\e')         echo escape;;
-            "[A")          echo up;;
-            "[B")          echo down;;
-            "[C")          echo right;;
-            "[D")          echo left;;
-            *)             printf '%s\n' "$1";;
+            $'\n'|'')      _key=enter;;
+            $'\177'|$'\b') _key=backspace;;
+            $'\t')         _key=tab;;
+            $'\e')         _key=escape;;
+            "[A")          _key=up;;
+            "[B")          _key=down;;
+            "[C")          _key=right;;
+            "[D")          _key=left;;
+            *)             _key=$1;;
         esac
     }
 
-    # Get element at given index from array
-    # Args: index, array
-    index_array() {
-        local i=$1
-        shift 1
-        printf '%s\n' "${@:$((i+1)):1}" # only way for array indexing to work for both bash and zsh
-        # ${@:0:1} will return the function name
-    }
-
-    # Find the index of an element in an array, returns -1 if not found
+    # Find the index of an element in an array, or -1 if not found
+    # Sets result in _index variable (avoids subshell)
     # Args: element, array
     index_of() {
         local e=$1
         shift 1
 
-        local i=0
+        local i=0 s=''
         for s in "$@"; do
             if [[ $s = "$e" ]]; then
-                echo $i
+                _index=$i
                 return
             fi
             ((i++))
         done
-        echo -1
-    }
-
-    # Escape special regex characters so they're treated as literal text in search
-    # Args: string
-    local regex_chars='$^.?+*(){}[]/'
-    escape_regex() {
-        local str=$1 c=''
-        for ((i=0; i<${#regex_chars}; i++)); do
-            c=${regex_chars:$i:1}
-            str=${str//"$c"/\\$c}
-        done
-        printf '%s\n' "$str"  # printf, not echo: echo swallows leading '-' as an option flag
+        _index=-1
     }
 
     # Convert string to lowercase, used for case-insensitive search
+    # Sets result in _lowered variable (avoids subshell)
     # Args: string
     to_lowercase() {
-        local str=$1
         if [[ $is_bash = true ]]; then
-            printf '%s' "$str" | tr '[:upper:]' '[:lower:]'
+            _lowered=$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]')
         else
-            printf '%s\n' "${str:l}"
+            _lowered="${1:l}"
+        fi
+    }
+
+    # Build all_dirs_lower, the lowercased mirror of all_dirs used when filtering.
+    # Computed once per directory so that per-keypress filtering forks no subshells.
+    build_lowercase_dirs() {
+        all_dirs_lower=()
+        [[ ${#all_dirs[@]} -eq 0 ]] && return
+        if [[ $is_zsh = true ]]; then
+            all_dirs_lower=("${(L)all_dirs[@]}")
+        else
+            local joined='' lowered=''
+            printf -v joined '%s\n' "${all_dirs[@]}"
+            lowered=$(printf '%s' "$joined" | tr '[:upper:]' '[:lower:]')
+            IFS=$'\n' read -r -d '' -a all_dirs_lower <<< "$lowered"
         fi
     }
 
@@ -187,8 +190,7 @@ icd() {
         file_text_cache=()
 
         # Determine how many file columns fit in the available terminal width
-        local term_width=$(tput cols)
-        local avail_width=$((term_width - DIR_COL_WIDTH))
+        local avail_width=$((_term_cols - DIR_COL_WIDTH))
         local num_file_cols=0
         local col_width=$MIN_FILE_COL_WIDTH
         local max_file_slots=0
@@ -217,11 +219,7 @@ icd() {
 
                     # Show file name if this slot has a corresponding file
                     elif [[ $file_index -lt $num_files ]]; then
-                        if [[ $is_zsh = true ]]; then
-                            truncate_name "${current_files[$((file_index+1))]}" $MAX_NAME_WIDTH
-                        else
-                            truncate_name "${current_files[$file_index]}" $MAX_NAME_WIDTH
-                        fi
+                        truncate_name "${current_files[$((file_index + ARR_OFF))]}" $MAX_NAME_WIDTH
                         file_name=$_truncated
 
                         # Pad non-last columns to their computed width for alignment
@@ -290,8 +288,7 @@ icd() {
             [[ $i -eq $selected_vindex ]] && is_selected=true
 
             # Get cached file text for this row
-            local file_text="${file_text_cache[$((i+1))]}"
-            [[ $is_bash = true ]] && file_text="${file_text_cache[$i]}"
+            local file_text="${file_text_cache[$((i + ARR_OFF))]}"
 
             # Print directory entry followed by file text
             render_dir_row "$dir" "$is_selected" "$is_first" "$is_last" "$can_scroll_up" "$can_scroll_down"
@@ -305,8 +302,7 @@ icd() {
 
         # Fill remaining rows with file text only (when fewer dirs than visible rows)
         while [[ $i -lt $num_visible_rows ]]; do
-            local file_text="${file_text_cache[$((i+1))]}"
-            [[ $is_bash = true ]] && file_text="${file_text_cache[$i]}"
+            local file_text="${file_text_cache[$((i + ARR_OFF))]}"
             if [[ $i -eq $((num_visible_rows - 1)) ]]; then
                 printf "${_dir_pad}%s${_el}" "$file_text"
             else
@@ -323,7 +319,7 @@ icd() {
     render_browser_row() {
         local row_index=$1 is_selected=$2
         local num_visible=${#visible_dirs[@]}
-        local dir_name="$(index_array $row_index "${visible_dirs[@]}")"
+        local dir_name="${visible_dirs[$((row_index + ARR_OFF))]}"
         local is_first=false is_last=false
         [[ $row_index -eq 0 ]] && is_first=true
         [[ $row_index -eq $((num_visible - 1)) ]] && is_last=true
@@ -346,8 +342,8 @@ icd() {
     # Display the header showing current directory and keyboard controls
     render_heading() {
         printf "${_rc}"
-        local pwd_str=$(pwd)
-        local lim_width=$(($(tput cols) - 20 - 5))  # 20 for "Change directory to ", 5 for buffer
+        local pwd_str=$PWD
+        local lim_width=$((_term_cols - 20 - 5))  # 20 for "Change directory to ", 5 for buffer
         [[ lim_width -gt MAX_DIR_WIDTH ]] && lim_width=$MAX_DIR_WIDTH
         [[ ${#pwd_str} -gt $lim_width ]] && pwd_str="...${pwd_str:$((${#pwd_str} - lim_width + 3))}"
         printf "${_smul}Change directory to ${_bold}%s${_sgr0}${_el}\n" "$pwd_str"
@@ -358,9 +354,11 @@ icd() {
 
     # Initialize variables
     local search_str='' prev_dir='' initial_pwd=$PWD initial_oldpwd=$OLDPWD
-    local show_hidden=false _truncated=''
+    local show_hidden=false _truncated='' _key='' _lowered='' _index=-1
     local current_files=()
     local file_text_cache=()
+    local all_dirs_lower=()
+    local _term_cols=$(tput cols)
     local num_visible_rows=$(($(tput lines) - 3 - 1))  # 3 fixed lines (heading + instructions + search), 1 for buffer
     [[ $num_visible_rows -gt $MAX_VISIBLE_DIRS ]] && num_visible_rows=$MAX_VISIBLE_DIRS
 
@@ -418,14 +416,16 @@ icd() {
         current_files=()
         local ls_flags='-F'
         [[ $show_hidden = true ]] && ls_flags='-FA'
-        local subdirs=$( (/bin/ls $ls_flags | grep /$ | sort -f) )
+        local listing=$(/bin/ls $ls_flags)
+        local subdirs=$(printf '%s\n' "$listing" | grep /$ | sort -f)
         if [[ -n $subdirs ]]; then
             [[ $is_bash = true ]] && IFS=$'\n' read -r -d '' -a all_dirs <<< "$subdirs"
             [[ $is_zsh = true ]] && all_dirs+=("${(f)subdirs}")
         fi
+        build_lowercase_dirs
 
         # Gather files (non-directories), sorted case-sensitive
-        local file_list=$( (/bin/ls $ls_flags | grep -v /$ | sort) )
+        local file_list=$(printf '%s\n' "$listing" | grep -v /$ | sort)
         if [[ -n $file_list ]]; then
             [[ $is_bash = true ]] && IFS=$'\n' read -r -d '' -a current_files <<< "$file_list"
             [[ $is_zsh = true ]] && current_files+=("${(f)file_list}")
@@ -445,8 +445,8 @@ icd() {
 
         # Select previous dir (if left arrow key was pressed)
         local selected_index=0
-        local prev_dir_index=$(index_of "$prev_dir" "${all_dirs[@]}")
-        [[ $prev_dir_index -ne -1 ]] && selected_index=$prev_dir_index;
+        index_of "$prev_dir" "${all_dirs[@]}"
+        [[ $_index -ne -1 ]] && selected_index=$_index
         local key_pressed=''
 
         local first_visible_dir_index=$((selected_index - num_visible_rows + 1))
@@ -462,16 +462,16 @@ icd() {
             if [[ $did_update_search = true ]]; then
                 render_search_string "$search_str"
 
-                # Filter directories by search string
+                # Filter directories by search string, as a literal case-insensitive substring
                 filtered_dirs=()
                 if [[ -z $search_str ]]; then
                     filtered_dirs=("${all_dirs[@]}")
                 else
-                    for dir in "${all_dirs[@]}"; do
-                        local dir_lowercase=$(to_lowercase "$dir")
-                        local regex=$(to_lowercase "$search_str")
-                        regex=$(escape_regex "$regex")
-                        [[ "$dir_lowercase" =~ $regex ]] && filtered_dirs+=("$dir")
+                    to_lowercase "$search_str"
+                    local needle=$_lowered num_all_dirs=${#all_dirs[@]} i=0
+                    for ((i=0; i<num_all_dirs; i++)); do
+                        [[ ${all_dirs_lower[$((i + ARR_OFF))]} = *"$needle"* ]] \
+                            && filtered_dirs+=("${all_dirs[$((i + ARR_OFF))]}")
                     done
                 fi
 
@@ -510,8 +510,7 @@ icd() {
                 if [[ $show_message = true ]]; then
                     cursor_to_browser
                     # First row: message + file text
-                    local first_row_file_text="${file_text_cache[1]}"
-                    [[ $is_bash = true ]] && first_row_file_text="${file_text_cache[0]}"
+                    local first_row_file_text="${file_text_cache[$ARR_OFF]}"
                     printf "    ${_dim}%s${_sgr0}" "$message"
                     local message_padding=$((MAX_NAME_WIDTH - ${#message}))
                     [[ $message_padding -gt 0 ]] && printf "%${message_padding}s" ''
@@ -519,8 +518,7 @@ icd() {
                     # Second row: secondary message (if any) + file text
                     local row_index=1
                     if [[ -n $message2 ]]; then
-                        local second_row_file_text="${file_text_cache[2]}"
-                        [[ $is_bash = true ]] && second_row_file_text="${file_text_cache[1]}"
+                        local second_row_file_text="${file_text_cache[$((1 + ARR_OFF))]}"
                         printf "    ${_dim}%s${_sgr0}" "$message2"
                         local message2_padding=$((MAX_NAME_WIDTH - ${#message2}))
                         [[ $message2_padding -gt 0 ]] && printf "%${message2_padding}s" ''
@@ -529,8 +527,7 @@ icd() {
                     fi
                     # Remaining rows: file text only
                     while [[ $row_index -lt $num_visible_rows ]]; do
-                        local row_file_text="${file_text_cache[$((row_index+1))]}"
-                        [[ $is_bash = true ]] && row_file_text="${file_text_cache[$row_index]}"
+                        local row_file_text="${file_text_cache[$((row_index + ARR_OFF))]}"
                         if [[ $row_index -eq $((num_visible_rows - 1)) ]]; then
                             printf "${_dir_pad}%s${_el}" "$row_file_text"
                         else
@@ -563,7 +560,8 @@ icd() {
             do_rerender_browser=true
 
             # Process user input
-            [[ $is_bash = true ]] && key_pressed=$(bash_key_input) || key_pressed=$(zsh_key_input)
+            read_key
+            key_pressed=$_key
             case $key_pressed in
                 left)   [[ $PWD != "$HOME" ]] && break;;
                 right)  [[ $num_filtered_dirs -gt 0 ]] && break;;
@@ -595,9 +593,9 @@ icd() {
         # cd accordingly
         case $key_pressed in
             right)
-                [[ $num_filtered_dirs -gt 0 ]] && builtin cd "$(index_array "$selected_index" "${filtered_dirs[@]}")"
+                [[ $num_filtered_dirs -gt 0 ]] && builtin cd "${filtered_dirs[$((selected_index + ARR_OFF))]}"
                 prev_dir='';;
-            left)  prev_dir=$(printf '%s/' "${PWD##*/}"); builtin cd ..;;
+            left)  prev_dir="${PWD##*/}/"; builtin cd ..;;
             tab)   [[ $show_hidden = true ]] && show_hidden=false || show_hidden=true; prev_dir='';;
             enter) break;;
         esac
