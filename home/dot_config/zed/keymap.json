@@ -580,5 +580,17 @@
     "unbind": {
       "cmd-2": "git_panel::ActivateHistoryTab"
     }
+  },
+  {
+    "context": "AcpThread",
+    "unbind": {
+      "shift-tab": "agent::CycleModeSelector"
+    }
+  },
+  {
+    "context": "AcpThread > Editor",
+    "unbind": {
+      "shift-tab": "agent::CycleModeSelector"
+    }
   }
 ]
