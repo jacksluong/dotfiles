@@ -1,5 +1,9 @@
-{{- if .personal }}
-# Personal machines commit with the personal identity everywhere, so this
-# supplementary config file is only for work machines.
+{{- if not (or (eq .git_primary "work") (and .work_identity (not .work_org))) }}
+# Only needed when the default email is the work one, or to switch github.com
+# remotes back to personal when work repos are on another host
 .config/git/config-personal
+{{- end }}
+{{- if not (and .work_identity (eq .git_primary "personal")) }}
+# Only needed with a work identity when personal is the default
+.config/git/config-work
 {{- end }}

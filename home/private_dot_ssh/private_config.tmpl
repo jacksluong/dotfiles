@@ -1,12 +1,12 @@
 # Managed by chezmoi (home/private_dot_ssh/private_config.tmpl).
-{{ if .personal -}}
+{{ if not .work_identity -}}
 # Personal machine: the personal account is the only identity, so it uses
 # the unsuffixed key and needs no github.com-personal alias.
 Host github.com
   AddKeysToAgent yes
   UseKeychain yes
   IdentityFile ~/.ssh/id_ed25519
-{{- else -}}
+{{- else if eq .git_primary "work" -}}
 # Work machine: work key is the github.com default; the github.com-personal
 # alias authenticates personal-account repos (see ~/.config/git/config URL rewrite).
 Host github.com
@@ -20,4 +20,27 @@ Host github.com-personal
   User git
   IdentityFile ~/.ssh/id_ed25519_personal
   IdentitiesOnly yes
+{{- else -}}
+# Personal key is the github.com default; the work key authenticates work repos
+Host github.com
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentityFile ~/.ssh/id_ed25519
+  IdentitiesOnly yes
+{{- if .work_org }}
+
+# Work org repos, see ~/.config/git/config URL rewrite
+Host github.com-work
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519_work
+  IdentitiesOnly yes
+{{- else }}
+
+# Work repos live on a host other than github.com
+Host * !github.com
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentityFile ~/.ssh/id_ed25519_work
+{{- end }}
 {{- end }}

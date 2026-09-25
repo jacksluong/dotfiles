@@ -1,18 +1,18 @@
-# Personal-machine-only apps. `chezmoi init` asks once ("Install
-# personal apps?") so a work machine can skip them. The core Brewfile holds
-# everything that should always be installed. The adopt args make brew take
-# over a matching app that was installed by hand instead of failing with
-# "already an App at /Applications/...".
-
-# --- Formulae ---
-# Mac App Store CLI, used by .chezmoiscripts/run_onchange_after_65-mas-apps.sh.tmpl
-brew "mas"
+# Personal bundle, installed when chosen during `chezmoi init`. The core
+# Brewfile holds everything that should always be installed. The adopt args
+# make brew take over a matching app that was installed by hand instead of
+# failing with "already an App at /Applications/...".
 
 # --- Casks ---
-# Craft is installed from the Mac App Store instead, see the mas-apps script
 cask "iterm2", args: { adopt: true }
 cask "zed", args: { adopt: true }
+cask "spark", args: { adopt: true }
 cask "spotify", args: { adopt: true }
 cask "steam", args: { adopt: true }
-cask "readdle-spark", args: { adopt: true }
 cask "cleanshot", args: { adopt: true }
+
+# --- Mac App Store ---
+mas "Capital One Shopping", id: 1477110326
+mas "TabBack", id: 1660506599
+mas "uBlock Origin Lite", id: 6745342698
+mas "Xcode", id: 497799835

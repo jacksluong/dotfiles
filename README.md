@@ -15,9 +15,8 @@ sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply \
   --source="$HOME/Developer/dotfiles" jacksluong/dotfiles
 ```
 
-chezmoi installs itself, clones this repo to `~/Developer/dotfiles`, then
-applies it. With distinction between a personal machine and a work machine,
-this will:
+chezmoi installs itself, clones this repo to `~/Developer/dotfiles`, asks a
+few setup questions, then applies it. This will:
 
 - Set up SSH keys for GitHub
 - Install Homebrew, its packages, and Mac apps
@@ -26,7 +25,19 @@ this will:
 - Write every managed file
 - Set up symlinks for personal AI skills repo
 - Set up keyboard remapping (kanata and Barnata)
-- Install Mac App Store apps
+
+### Setup questions
+
+| Question | Asked when |
+|---|---|
+| Will this machine also be used for work? | always |
+| App bundles to install: personal, work (each listing its apps) | machine is also for work |
+| Work GitHub email, blank if the personal GitHub is used for work | machine is also for work |
+| Which identity is the default for Git and GitHub: personal or work? | work email given |
+| Work GitHub org, blank if work repos are on a host other than github.com | personal is the default |
+
+A personal-only machine installs the personal bundle and skips all work
+setup. Leaving the work email blank skips the work Git and SSH setup.
 
 ## Overview
 
@@ -50,17 +61,19 @@ which `.zshrc` sources if present. It stays untracked.
 
 ### Git and SSH
 
-`~/.config/git/config` is templated per machine. Personal machines commit
-with the personal email, and work machines use the work email except for
-repos under the personal GitHub account.
+`~/.config/git/config` is templated per machine. Commits use the default
+identity's email. With a work email, the other identity's email applies to:
 
-SSH keys are generated on first apply (one key on personal machines, a work
-key plus a personal key on work machines) and added to GitHub via `gh`.
+- work default: repos under my personal GitHub user
+- personal default, with a work org: repos under that org
+- personal default, no work org: repos with a remote outside github.com
+
+SSH keys are generated on first apply and added to GitHub via `gh`.
 `~/.ssh/config` is templated to match.
 
 ### Repos
 
-On personal machines, my repos are cloned into `~/Developer`. This directory
+With the personal bundle, my repos are cloned into `~/Developer`. This directory
 is where I keep all of my active personal projects and code.
 
 ### Keyboard
@@ -117,27 +130,18 @@ pulls those changes back into the repo.
 
 `Brewfile` installs on every machine CLI tools (`git`, `bat`, `fzf`, `gh`,
 `pyenv`, `kanata`, `chezmoi`, etc.), zsh plugins, a few apps (Barnata,
-ClaudeUsageBar, AutoPiP, Raycast), and the Fira Code Nerd Font (gotta love
-ligatures!).
+ClaudeUsageBar, AutoPiP, Raycast, Craft), and the Fira Code Nerd Font (gotta
+love ligatures!).
 
-`Brewfile.personal` adds `mas` plus some more apps (iTerm2, Zed, Spotify,
-Steam, Spark, CleanShot) that will only install on personal machines.
+The app bundles chosen during setup add more:
 
-### Other installations
+- `Brewfile.personal` - iTerm2, Zed, Spotify, Steam, Spark, CleanShot, Xcode,
+  iWork apps, and Safari extensions (uBlock Origin Lite, TabBack, Capital One
+  Shopping)
+- `Brewfile.work` - Slack, Postman
 
-Aside from the apps installed by Homebrew, there are some apps and Safari
-extensions that are only available on the Mac App Store, which this setup
-installs using [mas](https://github.com/mas-cli/mas) (on personal machines
-only):
-
-| App | Type |
-|---|---|
-| Craft | App |
-| Xcode | App |
-| uBlock Origin Lite | Safari extension |
-| TabBack | Safari extension |
-| Capital One Shopping | Safari extension |
-| Hush | Safari extension |
+Mac App Store apps are installed by `brew bundle` through
+[mas](https://github.com/mas-cli/mas).
 
 ### Configs and app settings
 

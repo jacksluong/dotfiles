@@ -21,12 +21,16 @@ brew "zsh-syntax-highlighting"
 brew "pyenv"
 brew "pyenv-virtualenv"
 brew "kanata"
+brew "mas"
 
 # --- Casks ---
-# Personal-machine-only apps live in Brewfile.personal, installed only when
-# the `personal` chezmoi prompt was answered yes
+# Bundle-specific apps live in Brewfile.personal and Brewfile.work, installed
+# based on the answers to the `chezmoi init` prompts
 cask "barnata", args: { adopt: true }
 cask "claudeusagebar", args: { adopt: true }
 cask "autopip", args: { adopt: true }
 cask "raycast", args: { adopt: true }
 cask "font-fira-code-nerd-font"
+
+# --- Mac App Store ---
+mas "Craft", id: 1487937127

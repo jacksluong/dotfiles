@@ -1,14 +1,12 @@
 # Basics
 [user]
 	name = Jacky Luong
-{{- if .personal }}
+{{- if eq .git_primary "personal" }}
 	email = 27376487+jacksluong@users.noreply.github.com
 {{- else }}
-{{-   $workEmail := get . "git_email" }}
-{{-   if not $workEmail }}{{ fail "git_email missing/empty in chezmoi data -- re-run `chezmoi init` to be prompted for it, or set it under [data] in ~/.config/chezmoi/chezmoi.toml" }}{{ end }}
-	email = {{ $workEmail }}
+	email = {{ .git_email }}
 {{- end }}
-{{- if not .personal }}
+{{- if eq .git_primary "work" }}
 
 # Work machine: repos under my personal GitHub account go through the
 # github.com-personal SSH alias (see ~/.ssh/config, pointing at the personal
@@ -21,11 +19,32 @@
 	path = ~/.config/git/config-personal
 [includeIf "hasconfig:remote.*.url:https://github.com/jacksluong/**"]
 	path = ~/.config/git/config-personal
+{{- else if and .work_identity .work_org }}
+
+# Repos under the work GitHub org go through the github.com-work SSH alias
+# (see ~/.ssh/config, pointing at the work key) and commit with the work identity
+[url "git@github.com-work:{{ .work_org }}/"]
+	insteadOf = git@github.com:{{ .work_org }}/
+[includeIf "hasconfig:remote.*.url:git@github.com:{{ .work_org }}/**"]
+	path = ~/.config/git/config-work
+[includeIf "hasconfig:remote.*.url:https://github.com/{{ .work_org }}/**"]
+	path = ~/.config/git/config-work
+{{- else if .work_identity }}
+
+# Repos with a remote outside github.com commit with the work identity. Later
+# includes win, so github.com remotes switch back to the personal identity
+[includeIf "hasconfig:remote.*.url:**"]
+	path = ~/.config/git/config-work
+[includeIf "hasconfig:remote.*.url:git@github.com:*/**"]
+	path = ~/.config/git/config-personal
+[includeIf "hasconfig:remote.*.url:https://github.com/**"]
+	path = ~/.config/git/config-personal
 {{- end }}
 [credential]
 	helper = osxkeychain
 [push]
 	default = current
+	autoSetupRemote = true
 [filter "lfs"]
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process

@@ -1,3 +1,4 @@
+{{ $secondaryName := ternary "personal" "work" (eq .git_primary "work") -}}
 #!/bin/bash
 #
 # SSH bootstrap: generates this machine's ed25519 key(s), logs `gh` in
@@ -37,17 +38,17 @@ print_key() {
   echo
 }
 
-{{ if .personal -}}
+{{ if not .work_identity -}}
 # One account, one key
 primary="$ssh_dir/id_ed25519"
 secondary=""
 gen_key "$primary" "personal-github@${host}"
 {{- else -}}
-# Two keys, one for work and one for personal
+# Two keys, the unsuffixed one for the primary account
 primary="$ssh_dir/id_ed25519"
-secondary="$ssh_dir/id_ed25519_personal"
-gen_key "$primary" "work-github@${host}"
-gen_key "$secondary" "personal-github@${host}"
+secondary="$ssh_dir/id_ed25519_{{ $secondaryName }}"
+gen_key "$primary" "{{ .git_primary }}-github@${host}"
+gen_key "$secondary" "{{ $secondaryName }}-github@${host}"
 {{- end }}
 
 # If `gh` is missing for some reason, print the keys to register manually
@@ -60,18 +61,18 @@ if ! command -v gh &>/dev/null; then
   exit 0
 fi
 
-{{ if .personal -}}
+{{ if not .work_identity -}}
 if ! gh auth status &>/dev/null; then
   echo "==> Log in to GitHub"
   gh auth login --hostname github.com --git-protocol ssh --scopes admin:public_key --skip-ssh-key --web
 fi
 {{- else -}}
-# Work machines juggle two accounts, so confirm gh landed on the right one and
+# Two accounts share this machine, so confirm gh landed on the primary one and
 # keep attempting to log in until it does
 while true; do
   if ! gh auth status &>/dev/null; then
-    echo "==> Log in to GitHub with your work account"
-    gh auth login --git-protocol ssh --scopes admin:public_key --skip-ssh-key --web
+    echo "==> Log in to GitHub with your {{ .git_primary }} account"
+    gh auth login --hostname github.com --git-protocol ssh --scopes admin:public_key --skip-ssh-key --web
   fi
 
   if [[ ! -t 0 ]]; then
@@ -117,50 +118,66 @@ if ! add_key "$primary"; then
   print_key "$primary"
 fi
 
-# For work machines, the personal key needs to be added separately
+# The secondary key needs to be added separately
 if [[ -n "$secondary" ]]; then
-  personal_login="jacksluong"
-  work_login="$(gh api user --jq .login 2>/dev/null || true)"
+{{- if and (eq .git_primary "personal") (not .work_org) }}
+  # Work repos live on a host other than github.com, which gh can't reach here
+  echo "==> Add the work key to your account on the work Git host, then test with"
+  echo '    `ssh -T git@<work host>`'
+  print_key "$secondary"
+{{- else }}
+  secondary_name="{{ $secondaryName }}"
+  secondary_login="{{ if eq $secondaryName "personal" }}jacksluong{{ end }}"
+  account_label="${secondary_login:-your $secondary_name account}"
+  test_cmd="ssh -T git@github.com-${secondary_name}"
+  primary_login="$(gh api user --jq .login 2>/dev/null || true)"
 
-  # Log in to the personal account
-  skip_personal=0
-  if ! gh auth switch --hostname github.com --user "$personal_login" &>/dev/null && [[ -t 0 ]]; then
+  # Log in to the secondary account
+  skip_secondary=0
+  if ! { [[ -n "$secondary_login" ]] && gh auth switch --hostname github.com --user "$secondary_login" &>/dev/null; } && [[ -t 0 ]]; then
     echo
-    echo "==> Next, the personal key can go on the $personal_login account."
+    echo "==> Next, the $secondary_name key can go on $account_label."
     echo "    This means signing out of GitHub in your browser, then logging"
-    echo "    back in as $personal_login."
-    read -r -p "==> Set up SSH auth for $personal_login now? [Y/n] " reply
+    echo "    back in as $account_label."
+    read -r -p "==> Set up SSH auth for $account_label now? [Y/n] " reply
     if [[ "$reply" =~ ^[Nn] ]]; then
-      skip_personal=1
-      echo "==> Skipping. The personal key is still at ${secondary}.pub; add it later"
+      skip_secondary=1
+      echo "==> Skipping. The $secondary_name key is still at ${secondary}.pub; add it later"
       echo "    at https://github.com/settings/keys and test with"
-      echo '    `ssh -T git@github.com-personal`'
+      echo "    \`$test_cmd\`"
     else
       read -r -p "==> Press enter once you have signed out: " _
       gh auth login --hostname github.com --git-protocol ssh --scopes admin:public_key --skip-ssh-key --web || true
     fi
   fi
 
-  # Add the personal key to the personal account
-  if [[ "$skip_personal" -eq 0 ]]; then
-    if [[ "$(gh api user --jq .login 2>/dev/null || true)" == "$personal_login" ]]; then
+  # Add the secondary key to the secondary account
+  if [[ "$skip_secondary" -eq 0 ]]; then
+    current_login="$(gh api user --jq .login 2>/dev/null || true)"
+    if [[ -n "$secondary_login" ]]; then
+      [[ "$current_login" == "$secondary_login" ]] && on_secondary=1 || on_secondary=0
+    else
+      [[ -n "$current_login" && "$current_login" != "$primary_login" ]] && on_secondary=1 || on_secondary=0
+    fi
+    if [[ "$on_secondary" -eq 1 ]]; then
       if ! add_key "$secondary"; then
         echo "==> gh could not add the key; add it at https://github.com/settings/keys" >&2
-        echo '    and test with `ssh -T git@github.com-personal`' >&2
+        echo "    and test with \`$test_cmd\`" >&2
         print_key "$secondary"
       fi
-      echo "==> Finished with $personal_login; you can sign out of it in your browser."
+      echo "==> Finished with $current_login; you can sign out of it in your browser."
     else
-      echo "==> gh is not acting as $personal_login; add the personal key at https://github.com/settings/keys" >&2
-      echo '    and test with `ssh -T git@github.com-personal`' >&2
+      echo "==> gh is not acting as $account_label; add the $secondary_name key at https://github.com/settings/keys" >&2
+      echo "    and test with \`$test_cmd\`" >&2
       print_key "$secondary"
     fi
   fi
 
-  # Switch back to the work account
-  if [[ -n "$work_login" && "$(gh api user --jq .login 2>/dev/null || true)" != "$work_login" ]]; then
-    echo "==> Switching gh back to $work_login"
-    gh auth switch --hostname github.com --user "$work_login" \
-      || echo "==> Could not switch back; run: gh auth switch --user $work_login" >&2
+  # Switch back to the primary account
+  if [[ -n "$primary_login" && "$(gh api user --jq .login 2>/dev/null || true)" != "$primary_login" ]]; then
+    echo "==> Switching gh back to $primary_login"
+    gh auth switch --hostname github.com --user "$primary_login" \
+      || echo "==> Could not switch back; run: gh auth switch --user $primary_login" >&2
   fi
+{{- end }}
 fi

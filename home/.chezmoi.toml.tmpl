@@ -1,10 +1,32 @@
-{{- $personal := promptBoolOnce . "personal" "Install personal apps" -}}
-{{- $gitEmail := "" -}}
-{{- if not $personal -}}
-{{-   $gitEmail = promptStringOnce . "git_email" "Work git email" -}}
+{{- $workMachine := promptBoolOnce . "work_machine" "Will this machine also be used for work" -}}
+{{- $bundles := list "personal" -}}
+{{- $workEmail := "" -}}
+{{- $primary := "personal" -}}
+{{- $workOrg := "" -}}
+{{- if $workMachine -}}
+{{-   $bundlePrompt := "App bundles to install, on top of the core Brewfile" -}}
+{{-   range $bundle := list "personal" "work" -}}
+{{-     $apps := list -}}
+{{-     range regexFindAll `(?m)^(?:cask|mas) "[^"]+"` (include (joinPath (dir $.chezmoi.sourceDir) (print "Brewfile." $bundle))) -1 -}}
+{{-       $apps = append $apps (regexReplaceAll `^\w+ "([^"]+)"` . "${1}") -}}
+{{-     end -}}
+{{-     $bundlePrompt = printf "%s\n  %s: %s" $bundlePrompt $bundle (join ", " $apps) -}}
+{{-   end -}}
+{{-   $bundles = promptMultichoiceOnce . "bundles" (printf "%s\n" $bundlePrompt) (list "personal" "work") (list "personal" "work") -}}
+{{-   $workEmail = promptStringOnce . "git_email" "Work GitHub email (leave blank if you use your personal GitHub for work)" -}}
+{{-   if $workEmail -}}
+{{-     $primary = promptChoiceOnce . "git_primary" "Default identity for Git and GitHub" (list "personal" "work") "work" -}}
+{{-     if eq $primary "personal" -}}
+{{-       $workOrg = promptStringOnce . "work_org" "Work GitHub org (leave blank if work repos are on a host other than github.com)" -}}
+{{-     end -}}
+{{-   end -}}
 {{- end -}}
 sourceDir = {{ dir .chezmoi.sourceDir | quote }}
 
 [data]
-    personal = {{ $personal }}
-    git_email = {{ $gitEmail | quote }}
+    work_machine = {{ $workMachine }}
+    bundles = {{ $bundles | toJson }}
+    git_email = {{ $workEmail | quote }}
+    work_identity = {{ ne $workEmail "" }}
+    git_primary = {{ $primary | quote }}
+    work_org = {{ $workOrg | quote }}

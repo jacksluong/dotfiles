@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# Installs the Homebrew formulae and casks. The embedded hashes re-run this 
-# whenever a Brewfile changes.
+# Installs the Homebrew formulae, casks, and Mac App Store apps. The embedded
+# hashes re-run this whenever a Brewfile changes.
 #
 # Brewfile hash: {{ include (joinPath (dir .chezmoi.sourceDir) "Brewfile") | sha256sum }}
-{{ if .personal -}}
-# Brewfile.personal hash: {{ include (joinPath (dir .chezmoi.sourceDir) "Brewfile.personal") | sha256sum }}
+{{ range .bundles -}}
+# Brewfile.{{ . }} hash: {{ include (joinPath (dir $.chezmoi.sourceDir) (print "Brewfile." .)) | sha256sum }}
 {{ end -}}
 set -euo pipefail
 
@@ -13,9 +13,33 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 
 export HOMEBREW_BUNDLE_NO_UPGRADE=1
 
+# App IDs of the Mac App Store apps in the Brewfiles being installed
+mas_ids=(
+{{- $brewfiles := list "Brewfile" }}
+{{- range .bundles }}{{ $brewfiles = append $brewfiles (print "Brewfile." .) }}{{ end }}
+{{- range $brewfiles }}
+{{- range regexFindAll `(?m)^mas "[^"]+", id: \d+` (include (joinPath (dir $.chezmoi.sourceDir) .)) -1 }}
+  {{ regexReplaceAll `.*id: ` . "" }}
+{{- end }}
+{{- end }}
+)
+
+# mas can only install what the signed-in Apple ID already owns, and there is
+# no way to sign in from the CLI
+if [[ -t 0 ]]; then
+  installed="$(mas list 2>/dev/null | awk '{print $1}' || true)"
+  for id in "${mas_ids[@]}"; do
+    if ! printf '%s\n' "$installed" | grep -qx "$id"; then
+      echo
+      read -r -p "==> Make sure you're signed in to the App Store, then press Return (Ctrl-C to abort): " _
+      break
+    fi
+  done
+fi
+
 echo "==> Installing packages from Brewfile"
 brew bundle --file="{{ joinPath (dir .chezmoi.sourceDir) "Brewfile" }}"
-{{ if .personal -}}
-echo "==> Installing personal apps from Brewfile.personal"
-brew bundle --file="{{ joinPath (dir .chezmoi.sourceDir) "Brewfile.personal" }}"
+{{ range .bundles -}}
+echo "==> Installing {{ . }} apps from Brewfile.{{ . }}"
+brew bundle --file="{{ joinPath (dir $.chezmoi.sourceDir) (print "Brewfile." .) }}"
 {{ end -}}

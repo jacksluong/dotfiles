@@ -1,0 +1,8 @@
+# Work bundle, installed when chosen during `chezmoi init`. See
+# Brewfile.personal for the adopt args.
+
+# --- Casks ---
+cask "postman", args: { adopt: true }
+
+# --- Mac App Store ---
+mas "Slack for Desktop", id: 803453959
