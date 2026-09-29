@@ -37,3 +37,6 @@ worktrees/
 
 # Playwright
 .playwright-cli/
+
+# Docs
+.docs/
