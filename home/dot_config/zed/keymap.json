@@ -374,7 +374,7 @@
     }
   },
   {
-    "context": "Editor && mode == full && !Dock",
+    "context": "Editor && mode == full && !Dock && !AgentPanel",
     "bindings": {
       "shift-enter": "editor::NewlineAbove"
     }
