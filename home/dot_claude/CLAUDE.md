@@ -5,6 +5,8 @@ No em dashes in code, string literals, or frontend copy. Use comma, period, or r
 
 When committing or creating new branches, always follow the convention set by previous commits or branches for commit messages and branch names.
 
+Never include Claude as a co-author of commits.
+
 # Behavior
 Always ask clarification questions.
 
