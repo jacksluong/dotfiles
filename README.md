@@ -158,7 +158,7 @@ Shortcuts bindings) is imported by a setup script, but the App Shortcuts tab
 within that needs me to put in the shortcuts.
 
 Also managed are `~/.vimrc` (bootstraps vim-plug), `~/.config/git/ignore`,
-`~/.hushlogin`, and the oh-my-posh theme.
+`~/.hushlogin`, the oh-my-posh theme, and the global pnpm config.
 
 ## Making changes
 
