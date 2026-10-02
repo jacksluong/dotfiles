@@ -273,11 +273,6 @@
     }
   },
   {
-    "bindings": {
-      "cmd-n cmd-e": "workspace::ActivateNextPane"
-    }
-  },
-  {
     "context": "Pane",
     "bindings": {
       "cmd-[": "pane::GoBack"
@@ -591,6 +586,17 @@
     "context": "AcpThread > Editor",
     "unbind": {
       "shift-tab": "agent::CycleModeSelector"
+    }
+  },
+  {
+    "unbind": {
+      "cmd-m": "zed::Minimize"
+    }
+  },
+  {
+    "context": "SettingsWindow",
+    "unbind": {
+      "cmd-m": "settings_editor::Minimize"
     }
   }
 ]
