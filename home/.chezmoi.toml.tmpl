@@ -30,3 +30,9 @@ sourceDir = {{ dir .chezmoi.sourceDir | quote }}
     work_identity = {{ ne $workEmail "" }}
     git_primary = {{ $primary | quote }}
     work_org = {{ $workOrg | quote }}
+
+[diff]
+    exclude = ["scripts"]
+
+[status]
+    exclude = ["scripts"]
