@@ -23,13 +23,13 @@ ZSH_HIGHLIGHT_STYLES[global-alias]='fg=#FF9433'
 ZSH_HIGHLIGHT_STYLES[builtin]='fg=#FF9433'
 ZSH_HIGHLIGHT_STYLES[function]='fg=#FF9433'
 ZSH_HIGHLIGHT_STYLES[command]='fg=#FF9433'
-ZSH_HIGHLIGHT_STYLES[default]='fg=#FFF'
-ZSH_HIGHLIGHT_STYLES[path]='fg=#FFF,underline'
-ZSH_HIGHLIGHT_STYLES[path_pathseparator]='fg=#FFF,underline'
+ZSH_HIGHLIGHT_STYLES[default]='fg=default'
+ZSH_HIGHLIGHT_STYLES[path]='fg=default,underline'
+ZSH_HIGHLIGHT_STYLES[path_pathseparator]='fg=default,underline'
 ZSH_HIGHLIGHT_STYLES[path_prefix]=''
 ZSH_HIGHLIGHT_STYLES[path_prefix_pathseparator]=''
-ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=#FFF'
-ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=#FFF'
+ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=default'
+ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=default'
 
 # pyenv
 export PYENV_ROOT="$HOME/.pyenv"
