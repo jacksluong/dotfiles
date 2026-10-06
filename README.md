@@ -54,6 +54,7 @@ functions, which are described below.
 | `git.sh` | `commit`, `push`, `switch`, `clone`, `merge`, `stash` and friends, wrapping git with prompts and safe defaults |
 | `aliases.sh` | `g` for `git`, `sw` for git switching, `cl` for claude, `rm` via `trash`, a `cd` that navigates interactively when called with no arguments, etc. |
 | `icd.sh` | the interactive `cd` picker (see [gist](https://gist.github.com/jacksluong/744ee3e30f6fc05a5563353e6db28aca)) |
+| `zedkill.sh` | `zedkill`, a picker for killing processes that AI agents in Zed left running |
 | `helpers.sh` | shared prompt/validation helpers used by the others |
 
 Machine-specific config that shouldn't be synced goes in `~/.zshrc.local`,

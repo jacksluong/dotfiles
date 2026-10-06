@@ -52,6 +52,7 @@ typeset -TUx PATH path
 [[ -f "$HOME/.config/zsh/git.sh" ]] && source "$HOME/.config/zsh/git.sh"
 [[ -f "$HOME/.config/zsh/aliases.sh" ]] && source "$HOME/.config/zsh/aliases.sh"
 [[ -f "$HOME/.config/zsh/icd.sh" ]] && source "$HOME/.config/zsh/icd.sh"
+[[ -f "$HOME/.config/zsh/zedkill.sh" ]] && source "$HOME/.config/zsh/zedkill.sh"
 
 # machine-specific logic, if any
 [[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
