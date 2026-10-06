@@ -8,6 +8,11 @@ ytd-app {
   {
     display: none !important;
   }
+  
+  /* Only show CC and playback speed settings on a video, identifying by their SVGs icons */
+  .ytp-settings-menu .ytp-panel:not(:has(.ytp-panel-header)) .ytp-panel-menu > .ytp-menuitem:not(:has(path[d^="M21.20 3.01"])):not(:has(path[d^="M12 1c1.44"])) {
+    display: none !important;
+  }
 }
 
 /* Disable infinite scrolling on Reddit */
