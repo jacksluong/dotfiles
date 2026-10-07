@@ -133,7 +133,7 @@
     }
   },
   {
-    "context": "Editor && mode == full",
+    "context": "Editor",
     "bindings": {
       "cmd-backspace": "editor::DeleteLine"
     }
@@ -597,6 +597,18 @@
     "context": "SettingsWindow",
     "unbind": {
       "cmd-m": "settings_editor::Minimize"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "cmd-delete": "editor::DeleteToEndOfLine"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "cmd-backspace": "editor::DeleteToBeginningOfLine"
     }
   }
 ]
