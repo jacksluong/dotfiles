@@ -41,9 +41,7 @@ icd() {
     local _bold=$(tput bold)      # bold text
     local _dim=$(tput dim)        # dim/faint text
     local _sgr0=$(tput sgr0)      # reset all attributes
-    local _setab7=$(tput setab 7) # set background color to white
-    local _setaf0=$(tput setaf 0) # set foreground color to black
-    local _setaf3=$(tput setaf 3) # set foreground color to yellow
+    local _rev=$(tput rev)        # reverse video (swap the default foreground and background colors)
     local _el=$(tput el)          # clear from cursor to end of line
     local _ed=$(tput ed)          # clear from cursor to end of screen
     local _civis=$(tput civis)    # hide cursor
@@ -257,7 +255,7 @@ icd() {
         [[ $padding_count -gt 0 ]] && printf -v padding "%${padding_count}s" ''
 
         if [[ $is_selected = true ]]; then
-            printf " %s ${_setab7}${_setaf0} %s ${_sgr0}%s " "$prefix" "$dir_name" "$padding"
+            printf " %s ${_rev} %s ${_sgr0}%s " "$prefix" "$dir_name" "$padding"
         else
             printf " %s  %s%s  " "$prefix" "$dir_name" "$padding"
         fi
@@ -336,7 +334,7 @@ icd() {
 
     # Display the current search string with cursor
     render_search_string() {
-        printf "${_rc}${_cud1}${_cud1}${_cuf4}${_setaf3}%s${_el}${_sgr0}_\n" "$search_str"
+        printf "${_rc}${_cud1}${_cud1}${_cuf4}${_bold}%s${_el}${_sgr0}_\n" "$search_str"
     }
 
     # Display the header showing current directory and keyboard controls
