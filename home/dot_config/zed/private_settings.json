@@ -176,16 +176,17 @@
   "agent_servers": {
     "claude-acp": {
       "default_config_options": {
-        "fast": false,
+        "fast": true,
         "mode": "auto",
-        "effort": "medium",
+        "effort": "high",
         "model": "opus"
       },
       "favorite_config_option_values": {
         "model": [
           "opus[1m]",
           "claude-fable-5-1",
-          "opus"
+          "opus",
+          "fable"
         ]
       },
       "type": "registry"
