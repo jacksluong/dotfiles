@@ -498,8 +498,12 @@ switch() {
 
         if [ "$match_count" -eq 1 ]; then
             branch=$(echo "$matching_branches" | tr -d '[:space:]')
-            git switch "$branch" 2>/dev/null || git switch -c "$branch" --track origin/"$branch"
-            return 0
+            if git show-ref --verify --quiet refs/heads/"$branch"; then
+                git switch "$branch"
+            else
+                git switch -c "$branch" --track origin/"$branch"
+            fi
+            return
         else
             # Map local branches to whether they track a live upstream
             local -A branch_is_local branch_has_upstream
@@ -509,10 +513,26 @@ switch() {
                 [[ -n "$upstream" && "$track" != *gone* ]] && branch_has_upstream[$refname]=1
             done < <(git for-each-ref --format='%(refname:short)%09%(upstream)%09%(upstream:track)' refs/heads/)
 
+            # Map branches checked out in other worktrees to those worktrees' paths
+            local -A branch_worktree
+            local current_worktree line worktree_path
+            current_worktree=$(git rev-parse --show-toplevel)
+            while IFS= read -r line; do
+                case "$line" in
+                    "worktree "*) worktree_path=${line#worktree } ;;
+                    "branch refs/heads/"*)
+                        [[ "$worktree_path" != "$current_worktree" ]] && branch_worktree[${line#branch refs/heads/}]=$worktree_path
+                        ;;
+                esac
+            done < <(git worktree list --porcelain)
+
             echo "Multiple branches match '$branch':"
             local i=1
             while IFS= read -r candidate; do
-                if (( ${+branch_is_local[$candidate]} )) && (( ! ${+branch_has_upstream[$candidate]} )); then
+                if (( ${+branch_worktree[$candidate]} )); then
+                    local worktree_display=${branch_worktree[$candidate]/#$HOME/\~}
+                    print -P -- "$i) %F{8}${candidate//\%/%%} (in worktree ${worktree_display//\%/%%})%f"
+                elif (( ${+branch_is_local[$candidate]} )) && (( ! ${+branch_has_upstream[$candidate]} )); then
                     print -P -- "$i) %F{8}${candidate//\%/%%}%f"
                 else
                     echo "$i) $candidate"
@@ -540,8 +560,19 @@ switch() {
                 fi
 
                 selected_branch=$(echo "$matching_branches" | sed -n "${selection}p")
-                git switch "$selected_branch" 2>/dev/null || git switch -c "$selected_branch" --track origin/"$selected_branch"
-                return 0
+
+                if (( ${+branch_worktree[$selected_branch]} )); then
+                    local worktree_display=${branch_worktree[$selected_branch]/#$HOME/\~}
+                    echo "Branch '$selected_branch' is checked out in worktree $worktree_display. Select another branch, or q to cancel."
+                    continue
+                fi
+
+                if git show-ref --verify --quiet refs/heads/"$selected_branch"; then
+                    git switch "$selected_branch"
+                else
+                    git switch -c "$selected_branch" --track origin/"$selected_branch"
+                fi
+                return
             done
         fi
     fi
