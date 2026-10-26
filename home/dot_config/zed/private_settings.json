@@ -176,10 +176,10 @@
   "agent_servers": {
     "codex-acp": {
       "default_config_options": {
-        "fast-mode": true,
+        "fast-mode": false,
         "mode": "agent-full-access",
-        "reasoning_effort": "xhigh",
-        "model": "gpt-6-astra"
+        "reasoning_effort": "high",
+        "model": "gpt-6.1-sol"
       },
       "type": "registry"
     },
