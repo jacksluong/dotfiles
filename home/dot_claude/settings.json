@@ -17,5 +17,6 @@
       "effortLevel": "medium"
     }
   },
-  "theme": "auto"
+  "theme": "auto",
+  "idleCompaction": false
 }

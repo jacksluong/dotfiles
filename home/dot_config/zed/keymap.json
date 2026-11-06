@@ -610,5 +610,59 @@
     "unbind": {
       "cmd-backspace": "editor::DeleteToBeginningOfLine"
     }
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "ctrl-g b": "git::Blame"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "alt-cmd-g b": "git::Blame"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "alt-cmd-g r": "git::ReviewDiff"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "alt-cmd-g m": "git::OpenModifiedFiles"
+    }
+  },
+  {
+    "context": "ProjectSearchBar",
+    "unbind": {
+      "alt-cmd-g": "search::ToggleRegex"
+    }
+  },
+  {
+    "context": "ProjectSearchView",
+    "unbind": {
+      "alt-cmd-g": "search::ToggleRegex"
+    }
+  },
+  {
+    "context": "Editor && mode == full",
+    "bindings": {
+      "ctrl-l": "go_to_line::Toggle"
+    }
+  },
+  {
+    "context": "Editor && mode == full",
+    "unbind": {
+      "ctrl-g": "go_to_line::Toggle"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "ctrl-l": "editor::ScrollCursorCenter"
+    }
   }
 ]

@@ -185,9 +185,10 @@
     },
     "claude-acp": {
       "default_config_options": {
+        "ultracode": false,
         "fast": false,
         "mode": "auto",
-        "effort": "medium",
+        "effort": "max",
         "model": "opus"
       },
       "favorite_config_option_values": {
