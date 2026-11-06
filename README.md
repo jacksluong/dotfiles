@@ -98,6 +98,11 @@ Multiple files are written to `~/.claude/`:
 - `statusline-command.sh` - custom status line showing model, context use,
   rate limits, and diff size
 
+### Codex
+
+`~/.codex/AGENTS.md` holds the global instructions for Codex. It is a template
+that combines the Claude Code `CLAUDE.md` and `custom-concise` output style.
+
 ### AI skills
 
 Personal agent skills live in their own repo,

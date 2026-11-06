@@ -7,7 +7,7 @@ When committing or creating new branches, always follow the convention set by pr
 
 Always follow repo instructions, you don't have to ask unless it conflicts with any instructions the user provides. Never use worktrees unless explicitly instructed.
 
-Never include Claude as a co-author of commits or mention Claude Code in PR descriptions, comments, or anything Git-related.
+Never include any AI agent as a co-author of commits or mention any AI agent or tool in PR descriptions, comments, or anything Git-related.
 
 # Behavior
 Always ask clarification questions.

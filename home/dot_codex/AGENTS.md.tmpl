@@ -1,0 +1,5 @@
+{{- /* Built from the Claude Code instructions and output style so both agents share one source */ -}}
+{{ include "dot_claude/CLAUDE.md" | trim }}
+
+# Output style
+{{ regexReplaceAll "(?s)\\A---\\n.*?\\n---\\n" (include "dot_claude/output-styles/custom-concise.md") "" | trim }}
