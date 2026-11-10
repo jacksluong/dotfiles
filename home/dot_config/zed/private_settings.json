@@ -188,13 +188,13 @@
         "ultracode": false,
         "fast": false,
         "mode": "auto",
-        "effort": "max",
+        "effort": "high",
         "model": "opus"
       },
       "favorite_config_option_values": {
         "model": [
           "opus[1m]",
-          "claude-fable-5-1",
+          "claude-fable-5-2",
           "opus",
           "fable"
         ]
