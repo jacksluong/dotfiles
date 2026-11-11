@@ -1,6 +1,4 @@
 # Homebrew refuses to load non-official taps until they are trusted
-tap "jacksluong/tap", trusted: true
-tap "jandedobbeleer/oh-my-posh", trusted: true
 tap "artzainnn/tap", trusted: { casks: ["claudeusagebar"] }
 tap "vordenken/autopip", "https://github.com/vordenken/AutoPiP", trusted: { casks: ["autopip"] }
 
@@ -27,7 +25,6 @@ brew "mas"
 # --- Casks ---
 # Bundle-specific apps live in Brewfile.personal and Brewfile.work, installed
 # based on the answers to the `chezmoi init` prompts
-cask "barnata", args: { adopt: true }
 cask "claudeusagebar", args: { adopt: true }
 cask "autopip", args: { adopt: true }
 cask "raycast", args: { adopt: true }

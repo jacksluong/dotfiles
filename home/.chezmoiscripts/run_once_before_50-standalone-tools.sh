@@ -26,6 +26,21 @@ if [[ ! -d "$HOME/google-cloud-sdk" ]]; then
     || { rm -rf "$HOME/google-cloud-sdk"; exit 1; }
 fi
 
+# Barnata, from the DMG of the latest GitHub release. The app updates itself.
+if [[ ! -d /Applications/Barnata.app ]]; then
+  echo "==> Installing Barnata"
+  barnata_latest="$(curl -fsSLI -o /dev/null -w '%{url_effective}' https://github.com/jacksluong/barnata/releases/latest)"
+  barnata_version="${barnata_latest##*/v}"
+  barnata_tmp="$(mktemp -d)"
+  curl -fsSL -o "$barnata_tmp/Barnata.dmg" \
+    "https://github.com/jacksluong/barnata/releases/download/v$barnata_version/Barnata-$barnata_version.dmg"
+  hdiutil attach "$barnata_tmp/Barnata.dmg" -nobrowse -readonly -quiet -mountpoint "$barnata_tmp/mnt"
+  ditto "$barnata_tmp/mnt/Barnata.app" /Applications/Barnata.app \
+    || { hdiutil detach "$barnata_tmp/mnt" -quiet; rm -rf /Applications/Barnata.app; exit 1; }
+  hdiutil detach "$barnata_tmp/mnt" -quiet
+  rm -rf "$barnata_tmp"
+fi
+
 # playwright-cli comes from pnpm, so put pnpm on PATH before checking for either
 export PNPM_HOME="${PNPM_HOME:-$HOME/Library/pnpm}"
 export PATH="$PNPM_HOME:$PNPM_HOME/bin:$PATH"

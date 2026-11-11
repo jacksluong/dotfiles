@@ -21,7 +21,7 @@ few setup questions, then applies it. This will:
 - Set up SSH keys for GitHub
 - Install Homebrew, its packages, and Mac apps
 - Create and populate `~/Developer`
-- Install remaining tools (e.g., Claude Code, pnpm)
+- Install remaining tools (e.g., Claude Code, pnpm, Barnata)
 - Write every managed file
 - Set up symlinks for personal AI skills repo
 - Set up keyboard remapping (kanata and Barnata)
@@ -31,7 +31,7 @@ few setup questions, then applies it. This will:
 
 | Question | Asked when |
 |---|---|
-| Will this machine also be used for work? | always |
+| Will this machine also be used for work? [y/n] | always |
 | App bundles to install: personal, work (each listing its apps) | machine is also for work |
 | Work GitHub email, blank if the personal GitHub is used for work | machine is also for work |
 | Which identity is the default for Git and GitHub: personal or work? | work email given |
@@ -136,13 +136,13 @@ pulls those changes back into the repo.
 ### Homebrew
 
 `Brewfile` installs on every machine CLI tools (`git`, `bat`, `fzf`, `gh`,
-`pyenv`, `kanata`, `chezmoi`, etc.), zsh plugins, a few apps (Barnata,
-ClaudeUsageBar, AutoPiP, Raycast, Claude, Craft), and the Fira Code Nerd Font (gotta
-love ligatures!).
+`pyenv`, `kanata`, `chezmoi`, etc.), zsh plugins, a few apps (ClaudeUsageBar,
+AutoPiP, Raycast, Claude, Craft), and the Fira Code Nerd Font (gotta love
+ligatures!).
 
 The app bundles chosen during setup add more:
 
-- `Brewfile.personal` - iTerm2, Zed, Spotify, Steam, Spark, CleanShot, Xcode,
+- `Brewfile.personal` - iTerm2, Zed, Steam, Spark, CleanShot, Xcode,
   iWork apps, and Safari extensions (uBlock Origin Lite, TabBack, Capital One
   Shopping)
 - `Brewfile.work` - Slack, Postman
@@ -189,7 +189,7 @@ Each `chezmoi apply` then goes through three phases:
 1. **`before` scripts.** These scripts live in `home/.chezmoiscripts/` and run
    before the apply itself, in alphabetical order. In this repo, they install
    Homebrew, install the latest Python with pyenv, set up tools that ship their
-   own installer (e.g., Claude Code, pnpm, playwright-cli, gcloud), set up SSH
+   own installer (e.g., Claude Code, pnpm, playwright-cli, gcloud, Barnata), set up SSH
    keys, and do other things.
 2. **The apply.** I have chezmoi track an external git repo that contains my AI
    skills, so that gets cloned. Then, every managed file is rendered and written
