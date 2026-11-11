@@ -21,7 +21,7 @@ few setup questions, then applies it. This will:
 - Set up SSH keys for GitHub
 - Install Homebrew, its packages, and Mac apps
 - Create and populate `~/Developer`
-- Install remaining tools (e.g., Claude Code, pnpm, Barnata)
+- Install remaining tools (e.g., Claude Code, pnpm, Node.js, Barnata)
 - Write every managed file
 - Set up symlinks for personal AI skills repo
 - Set up keyboard remapping (kanata and Barnata)
@@ -189,7 +189,7 @@ Each `chezmoi apply` then goes through three phases:
 1. **`before` scripts.** These scripts live in `home/.chezmoiscripts/` and run
    before the apply itself, in alphabetical order. In this repo, they install
    Homebrew, install the latest Python with pyenv, set up tools that ship their
-   own installer (e.g., Claude Code, pnpm, playwright-cli, gcloud, Barnata), set up SSH
+   own installer (e.g., Claude Code, pnpm, Node.js, playwright-cli, gcloud, Barnata), set up SSH
    keys, and do other things.
 2. **The apply.** I have chezmoi track an external git repo that contains my AI
    skills, so that gets cloned. Then, every managed file is rendered and written

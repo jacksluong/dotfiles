@@ -52,6 +52,14 @@ if ! command -v pnpm &>/dev/null; then
   hash -r
 fi
 
+# Node.js, the latest version, set globally through pnpm unless a node is
+# already on PATH. pnpm ships without one, and playwright-cli needs it.
+if ! command -v node &>/dev/null; then
+  echo "==> Installing the latest Node.js with pnpm"
+  pnpm runtime set node latest -g
+  hash -r
+fi
+
 # playwright-cli
 if ! command -v playwright-cli &>/dev/null; then
   echo "==> Installing playwright-cli"
