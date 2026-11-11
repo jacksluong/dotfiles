@@ -46,7 +46,7 @@ setup. Leaving the work email blank skips the work Git and SSH setup.
 zsh with [oh-my-posh](https://ohmyposh.dev) (for that sweet prompt customization),
 [autosuggestions](https://github.com/zsh-users/zsh-autosuggestions), and [syntax
 highlighting](https://github.com/zsh-users/zsh-syntax-highlighting). `~/.zshrc`
-also wires up pyenv, pnpm, fzf for history search, and all of my custom shell
+also wires up pyenv, pnpm, gcloud, fzf for history search, and all of my custom shell
 functions, which are described below.
 
 | File | What it adds |
@@ -184,8 +184,9 @@ Each `chezmoi apply` then goes through three phases:
 
 1. **`before` scripts.** These scripts live in `home/.chezmoiscripts/` and run
    before the apply itself, in alphabetical order. In this repo, they install
-   Homebrew, set up tools that ship their own installer (e.g., Claude Code, pnpm,
-   playwright-cli), set up SSH keys, and do other things.
+   Homebrew, install the latest Python with pyenv, set up tools that ship their
+   own installer (e.g., Claude Code, pnpm, playwright-cli, gcloud), set up SSH
+   keys, and do other things.
 2. **The apply.** I have chezmoi track an external git repo that contains my AI
    skills, so that gets cloned. Then, every managed file is rendered and written
    to its place in `$HOME`. This includes all the files related to shell setup,
