@@ -19,3 +19,8 @@ ytd-app {
 shreddit-feed > :nth-child(n+26) {
   display: none !important;
 }
+
+/* Hide logo in header bar on Reddit */
+#reddit-logo {
+  display: none !important;
+}
