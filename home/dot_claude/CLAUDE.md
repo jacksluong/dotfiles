@@ -1,6 +1,8 @@
 # Engineering
 When editing READMEs, keep text simple and always omit the reasoning behind decisions unless otherwise specified.
 
+When adding or editing code, match the style of the code and comments around it. A new comment should be as short and as plain as its neighbors: if nearby comments are a one-line label, write a one-line label. Do not explain reasoning or background in a comment unless the nearby comments do.
+
 No em dashes in code, string literals, or frontend copy. Use comma, period, or restructure sentence instead.
 
 When committing or creating new branches, always follow the convention set by previous commits or branches for commit messages and branch names.
