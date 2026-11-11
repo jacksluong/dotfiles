@@ -26,6 +26,7 @@ few setup questions, then applies it. This will:
 - Set up symlinks for personal AI skills repo
 - Set up keyboard remapping (kanata and Barnata)
 - Set the Dock's pinned items
+- Open every installed app once
 
 ### Setup questions
 
@@ -118,9 +119,9 @@ directories the harnesses read:
 - `~/.agents/skills` for Codex
 
 When a skill is edited in `~/Developer/skills`, the change is live in the next
-agent session. I also have the [Impeccable](https://impeccable.style/) and
-[Playwright CLI](https://playwright.dev/) skills installed globally, but they
-are installed via script and not tracked by `chezmoi`.
+agent session. I also have the [Playwright CLI](https://playwright.dev/) skill
+installed globally, but it is installed via script and not tracked by
+`chezmoi`.
 
 ### Editor
 
@@ -197,7 +198,8 @@ Each `chezmoi apply` then goes through three phases:
    app config (Zed, Claude Code, etc.), and more.
 3. **`after` scripts.** More scripts that live in `home/.chezmoiscripts/` but
    run after the apply. Their actions include but are not limited to: install
-   vim plugins, clone my repos, and set up my keyboard as described above.
+   vim plugins, clone my repos, set up my keyboard as described above, and open
+   every installed app.
 
 > Note: `home/` is the source directory for `$HOME`, which determines where
   files are written. Nothing outside of `home/` is managed by chezmoi.

@@ -1,0 +1,54 @@
+#!/bin/bash
+#
+# Opens every app the setup installed, once per machine, so each one can go
+# through its first launch. The app list is read from the Brewfiles when this
+# runs, so editing a Brewfile later does not open everything again.
+set -euo pipefail
+
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+brewfiles=(
+  "{{ joinPath .chezmoi.workingTree "Brewfile" }}"
+{{- range .bundles }}
+  "{{ joinPath $.chezmoi.workingTree (print "Brewfile." .) }}"
+{{- end }}
+)
+
+# Installed by the standalone tools script instead of a Brewfile
+apps=("Barnata.app")
+
+# Casks: brew knows the name of the app each one installs
+casks=()
+for brewfile in "${brewfiles[@]}"; do
+  while IFS= read -r cask; do
+    [[ -n "$cask" ]] && casks+=("$cask")
+  done < <(brew bundle list --cask --file="$brewfile" 2>/dev/null || true)
+done
+if [[ ${#casks[@]} -gt 0 ]]; then
+  while IFS= read -r app; do
+    [[ -n "$app" ]] && apps+=("$(basename "$app")")
+  done < <(brew info --cask --json=v2 "${casks[@]}" 2>/dev/null \
+    | jq -r '.casks[].artifacts[] | .app? // empty
+        | if (.[-1] | type) == "object" and .[-1].target then .[-1].target else .[0] end' \
+    || true)
+fi
+
+# Mac App Store apps: `mas list` maps each app ID to the installed app's name
+mas_installed="$(mas list 2>/dev/null \
+  | sed -E 's/^ *([0-9]+) +(.*[^ ]) +\([^)]*\) *$/\1|\2/' || true)"
+for brewfile in "${brewfiles[@]}"; do
+  while IFS= read -r id; do
+    name="$(printf '%s\n' "$mas_installed" | awk -F'|' -v id="$id" '$1 == id { print $2 }')"
+    [[ -n "$name" ]] && apps+=("$name.app")
+  done < <(sed -n -E 's/^mas ".*", id: ([0-9]+).*/\1/p' "$brewfile")
+done
+
+echo "==> Opening installed apps"
+for app in "${apps[@]}"; do
+  if [[ ! -d "/Applications/$app" ]]; then
+    echo "==> /Applications/$app is missing, skipping" >&2
+    continue
+  fi
+  # -g keeps each app from taking focus away from the terminal
+  open -g "/Applications/$app" || echo "==> Could not open $app" >&2
+done

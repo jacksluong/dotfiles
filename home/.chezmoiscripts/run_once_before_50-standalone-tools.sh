@@ -72,9 +72,3 @@ if [[ ! -d "$HOME/.claude/skills/playwright-cli" ]]; then
   echo "==> Installing the playwright-cli agent skill"
   playwright-cli install --skills -g
 fi
-
-# impeccable
-if [[ ! -d "$HOME/.claude/skills/impeccable" ]]; then
-  echo "==> Installing the impeccable agent skill"
-  pnpm dlx impeccable install
-fi
