@@ -21,6 +21,7 @@ brew "zsh-syntax-highlighting"
 brew "pyenv"
 brew "pyenv-virtualenv"
 brew "kanata"
+brew "dockutil"
 brew "mas"
 
 # --- Casks ---
@@ -30,6 +31,7 @@ cask "barnata", args: { adopt: true }
 cask "claudeusagebar", args: { adopt: true }
 cask "autopip", args: { adopt: true }
 cask "raycast", args: { adopt: true }
+cask "claude", args: { adopt: true }
 cask "font-fira-code-nerd-font"
 
 # --- Mac App Store ---

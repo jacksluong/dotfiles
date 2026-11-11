@@ -25,6 +25,7 @@ few setup questions, then applies it. This will:
 - Write every managed file
 - Set up symlinks for personal AI skills repo
 - Set up keyboard remapping (kanata and Barnata)
+- Set the Dock's pinned items
 
 ### Setup questions
 
@@ -136,7 +137,7 @@ pulls those changes back into the repo.
 
 `Brewfile` installs on every machine CLI tools (`git`, `bat`, `fzf`, `gh`,
 `pyenv`, `kanata`, `chezmoi`, etc.), zsh plugins, a few apps (Barnata,
-ClaudeUsageBar, AutoPiP, Raycast, Craft), and the Fira Code Nerd Font (gotta
+ClaudeUsageBar, AutoPiP, Raycast, Claude, Craft), and the Fira Code Nerd Font (gotta
 love ligatures!).
 
 The app bundles chosen during setup add more:
@@ -162,6 +163,9 @@ Some apps have no non-interactive import, so their settings exports live in
 `imports/macos/symbolichotkeys.plist` (System Settings > Keyboard > Keyboard
 Shortcuts bindings) is imported by a setup script, but the App Shortcuts tab
 within that needs me to put in the shortcuts.
+
+The Dock's pinned items and their order are set once per machine by a setup
+script using [dockutil](https://github.com/kcrawford/dockutil).
 
 Also managed are `~/.vimrc` (bootstraps vim-plug), `~/.config/git/ignore`,
 `~/.hushlogin`, and the oh-my-posh theme.
