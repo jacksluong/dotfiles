@@ -11,7 +11,7 @@
   "active_pane_modifiers": {
     "inactive_opacity": 0.6
   },
-  "agent_buffer_font_family": "Fira Code",
+  "agent_buffer_font_family": "FiraCode Nerd Font",
   "agent_buffer_font_size": 12.5,
   "gutter": {
     "breakpoints": false
@@ -189,7 +189,7 @@
         "fast": false,
         "mode": "auto",
         "effort": "high",
-        "model": "opus"
+        "model": "fable"
       },
       "favorite_config_option_values": {
         "model": [
