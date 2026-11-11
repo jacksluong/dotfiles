@@ -11,7 +11,7 @@ All it takes is one command, which can be run on an existing computer or a
 brand new Mac with nothing installed:
 
 ```sh
-sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply \
+sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply --use-builtin-git=true \
   --source="$HOME/Developer/dotfiles" jacksluong/dotfiles
 ```
 
