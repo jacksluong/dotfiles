@@ -10,6 +10,15 @@ if ! command -v claude &>/dev/null && [[ ! -x "$HOME/.local/bin/claude" ]]; then
   curl -fsSL https://claude.ai/install.sh | bash
 fi
 
+{{ if .work_machine -}}
+# Codex
+if ! command -v codex &>/dev/null && [[ ! -x "$HOME/.local/bin/codex" ]]; then
+  echo "==> Installing Codex"
+  curl -fsSL https://chatgpt.com/codex/install.sh \
+    | PATH="$HOME/.local/bin:$PATH" CODEX_NON_INTERACTIVE=1 sh
+fi
+
+{{ end -}}
 # gcloud
 if [[ ! -d "$HOME/google-cloud-sdk" ]]; then
   echo "==> Installing gcloud"

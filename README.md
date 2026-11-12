@@ -102,6 +102,8 @@ Multiple files are written to `~/.claude/`:
 
 ### Codex
 
+On work machines, the Codex CLI is installed with its standalone installer.
+
 `~/.codex/AGENTS.md` holds the global instructions for Codex. It is a template
 that combines the Claude Code `CLAUDE.md` and `custom-concise` output style.
 
