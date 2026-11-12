@@ -10,8 +10,7 @@ if ! command -v claude &>/dev/null && [[ ! -x "$HOME/.local/bin/claude" ]]; then
   curl -fsSL https://claude.ai/install.sh | bash
 fi
 
-# gcloud (Apple silicon), per https://docs.cloud.google.com/sdk/docs/install-sdk.
-# The pyenv shims make the installer use pyenv's Python.
+# gcloud
 if [[ ! -d "$HOME/google-cloud-sdk" ]]; then
   echo "==> Installing gcloud"
   gcloud_tmp="$(mktemp -d)"
@@ -26,7 +25,7 @@ if [[ ! -d "$HOME/google-cloud-sdk" ]]; then
     || { rm -rf "$HOME/google-cloud-sdk"; exit 1; }
 fi
 
-# Barnata, from the DMG of the latest GitHub release. The app updates itself.
+# Barnata
 if [[ ! -d /Applications/Barnata.app ]]; then
   echo "==> Installing Barnata"
   barnata_latest="$(curl -fsSLI -o /dev/null -w '%{url_effective}' https://github.com/jacksluong/barnata/releases/latest)"
@@ -52,8 +51,7 @@ if ! command -v pnpm &>/dev/null; then
   hash -r
 fi
 
-# Node.js, the latest version, set globally through pnpm unless a node is
-# already on PATH. pnpm ships without one, and playwright-cli needs it.
+# Node.js
 if ! command -v node &>/dev/null; then
   echo "==> Installing the latest Node.js with pnpm"
   pnpm runtime set node latest -g
