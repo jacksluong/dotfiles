@@ -4,7 +4,9 @@ ytd-app {
   ytd-browse[page-subtype="home"] #header, /* Pills strip at top of homepage */
   ytd-rich-section-renderer, /* Shorts section on homepage */
   #video-preview, /* Video auto-play on homepage */
-  ytd-browse[page-subtype="home"] ytd-continuation-item-renderer /* Infinite scrolling on homepage */
+  ytd-browse[page-subtype="home"] ytd-continuation-item-renderer, /* Infinite scrolling on homepage */
+  #voice-search-button,
+  #logo
   {
     display: none !important;
   }
@@ -15,12 +17,15 @@ ytd-app {
   }
 }
 
-/* Disable infinite scrolling on Reddit */
-shreddit-feed > :nth-child(n+26) {
-  display: none !important;
-}
-
-/* Hide logo in header bar on Reddit */
-#reddit-logo {
-  display: none !important;
+/* Hide undesirable elements/aspects of Reddit's interface */
+shreddit-app {
+  /* Disable infinite scrolling on Reddit */
+  shreddit-feed > :nth-child(n+26) {
+    display: none !important;
+  }
+  
+  /* Hide logo in header bar on Reddit */
+  #reddit-logo {
+    display: none !important;
+  }
 }
