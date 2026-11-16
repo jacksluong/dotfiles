@@ -7,9 +7,26 @@ No em dashes in code, string literals, or frontend copy. Use comma, period, or r
 
 When committing or creating new branches, always follow the convention set by previous commits or branches for commit messages and branch names.
 
-Always follow repo instructions, you don't have to ask unless it conflicts with any instructions the user provides. Never use worktrees unless explicitly instructed.
+Always follow repo instructions, you don't have to ask unless it conflicts with any instructions the user provides.
 
 Never include any AI agent as a co-author of commits or mention any AI agent or tool in PR descriptions, comments, or anything Git-related.
+
+# Worktrees
+Make code changes in a git worktree, so the user's main checkout stays as it is. Skip this for read-only tasks, files outside a git repo, the `~/Developer/dotfiles` and `~/Developer/skills` repos, or when the user says to work in the current checkout. If the repo's instructions say how to use worktrees, follow them instead.
+
+Before you change code, pick where to work, in this order:
+1. If the user or a parent agent gave you a directory, work there.
+2. If the session started in a linked worktree (`git rev-parse --git-dir` differs from `--git-common-dir`), work there unless the task is about a different branch.
+3. If you used a worktree earlier in this session for the same task, check that it still exists and is on the expected branch, then keep using it.
+4. If the task is about an existing branch or PR, look for its branch in `git worktree list --porcelain`. If the main checkout has it, work there. If a linked worktree has it and has uncommitted changes you did not make, ask before using it, since another session may be working there.
+5. Otherwise, create a worktree at `.worktrees/<branch>` in the main checkout's root, the parent of `git rev-parse --path-format=absolute --git-common-dir`. For a PR, use `gh pr checkout <number> --worktree <path>`. For new work, branch from the freshly fetched default branch unless the task builds on another branch. If the task depends on uncommitted changes in the main checkout, ask first.
+
+If your harness can switch the session into the worktree, do that. Then:
+- Use the worktree's path for every read, edit, and command, including paths the user gives in the main checkout. Give subagents the worktree's path.
+- Install dependencies the way the repo's docs describe, and copy the ignored files the code needs, such as `.env`, from the main checkout.
+- When you finish, tell the user the worktree's path and branch.
+
+Remove a worktree when its PR has merged, or when you created it in this session and made no changes in it. Switch the session out of it first, then run `git worktree remove <path>` and delete its local branch with `git branch -D`, since squash merges leave it unmerged. If the worktree has uncommitted changes, or the branch has commits the PR lacks, ask first. Leave other worktrees alone unless the user asks.
 
 # Behavior
 Ask clarification questions before you start when a request is unclear or has a choice only the user can make. Once the task is clear, keep working without stopping to ask about things you can decide yourself. Risky or destructive actions still need a go-ahead.
