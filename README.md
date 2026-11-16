@@ -74,6 +74,14 @@ identity's email. With a work email, the other identity's email applies to:
 SSH keys are generated on first apply and added to GitHub via `gh`.
 `~/.ssh/config` is templated to match.
 
+Git rewrites `https://github.com/` URLs to SSH for clones, fetches, pulls,
+and pushes, including existing remotes. Personal and work repos use their
+configured SSH keys. The SSH bootstrap also sets `gh` to use SSH for GitHub
+Git operations, including when `gh` is already logged in.
+
+Run `chezmoi apply` after pulling these changes on an existing machine.
+The initial chezmoi download and bootstrap clone still use HTTPS.
+
 ### Repos
 
 With the personal bundle, my repos are cloned into `~/Developer`. This directory

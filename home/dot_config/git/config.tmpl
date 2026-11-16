@@ -6,15 +6,17 @@
 {{- else }}
 	email = {{ .git_email }}
 {{- end }}
+
+# GitHub remotes use SSH
+[url "git@github.com:"]
+	insteadOf = https://github.com/
 {{- if eq .git_primary "work" }}
 
-# Work machine: repos under my personal GitHub account go through the
-# github.com-personal SSH alias (see ~/.ssh/config, pointing at the personal
-# key) and commit with the personal identity. The includeIf matches the
-# canonical URL as stored in the remote -- insteadOf rewrites are not applied
-# to it.
+# On work machines, repos under my personal GitHub account go through the
+# github.com-personal SSH alias
 [url "git@github.com-personal:jacksluong/"]
 	insteadOf = git@github.com:jacksluong/
+	insteadOf = https://github.com/jacksluong/
 [includeIf "hasconfig:remote.*.url:git@github.com:jacksluong/**"]
 	path = ~/.config/git/config-personal
 [includeIf "hasconfig:remote.*.url:https://github.com/jacksluong/**"]
@@ -25,6 +27,7 @@
 # (see ~/.ssh/config, pointing at the work key) and commit with the work identity
 [url "git@github.com-work:{{ .work_org }}/"]
 	insteadOf = git@github.com:{{ .work_org }}/
+	insteadOf = https://github.com/{{ .work_org }}/
 [includeIf "hasconfig:remote.*.url:git@github.com:{{ .work_org }}/**"]
 	path = ~/.config/git/config-work
 [includeIf "hasconfig:remote.*.url:https://github.com/{{ .work_org }}/**"]

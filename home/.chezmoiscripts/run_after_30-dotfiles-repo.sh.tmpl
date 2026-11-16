@@ -19,7 +19,7 @@ case "$url" in
       git -C "$repo" remote set-url origin "$ssh_url"
       echo "==> Moved the dotfiles origin to $ssh_url"
     else
-      echo "==> $ssh_url is not reachable; leaving the dotfiles origin on HTTPS" >&2
+      echo "==> $ssh_url is not reachable; leaving the stored origin URL unchanged" >&2
     fi
     ;;
 esac

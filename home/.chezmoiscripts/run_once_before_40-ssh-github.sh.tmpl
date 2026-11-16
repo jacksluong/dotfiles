@@ -181,3 +181,8 @@ if [[ -n "$secondary" ]]; then
   fi
 {{- end }}
 fi
+
+if [[ "$(gh config get git_protocol --host github.com)" != "ssh" ]]; then
+  echo "==> Setting GitHub CLI Git protocol to SSH"
+  gh config set git_protocol ssh --host github.com
+fi
