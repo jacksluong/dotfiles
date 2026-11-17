@@ -38,6 +38,7 @@ worktrees/
 .reviews/
 .plans/
 .learning/
+output/
 
 # Playwright
 .playwright-cli/
