@@ -115,6 +115,9 @@ On work machines, the Codex CLI is installed with its standalone installer.
 `~/.codex/AGENTS.md` holds the global instructions for Codex. It is a template
 that combines the Claude Code `CLAUDE.md` and `custom-concise` output style.
 
+chezmoi sets `model_context_window = 1000000` in `~/.codex/config.toml`.
+Codex caps the usable window for the active model. Zed defaults to GPT-6.2 Sol.
+
 ### AI skills
 
 Personal agent skills live in their own repo,

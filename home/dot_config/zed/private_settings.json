@@ -179,7 +179,7 @@
         "fast-mode": false,
         "mode": "agent-full-access",
         "reasoning_effort": "max",
-        "model": "gpt-6.1-sol"
+        "model": "gpt-6.2-sol"
       },
       "type": "registry"
     },
