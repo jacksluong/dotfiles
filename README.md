@@ -103,7 +103,7 @@ an app I created. The config is tracked by chezmoi.
 Multiple files are written to `~/.claude/`:
 
 - `CLAUDE.md` - global instructions applied in every project
-- `settings.json` - model, effort, theme, output style, and status line wiring
+- `settings.json` - model, effort, theme, output style, Code Mode, and status line wiring
 - `output-styles/custom-concise.md` - the custom output style for Claude Code
 - `statusline-command.sh` - custom status line showing model, context use,
   rate limits, and diff size
