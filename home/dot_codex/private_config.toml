@@ -1,1 +1,4 @@
 model_context_window = 1000000
+
+[tui]
+screen_reader_detection_done = true

@@ -18,8 +18,5 @@
     }
   },
   "theme": "auto",
-  "idleCompaction": false,
-  "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_CODE_MODE": "1"
-  }
+  "idleCompaction": false
 }
