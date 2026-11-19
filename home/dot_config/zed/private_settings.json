@@ -194,9 +194,7 @@
       "favorite_config_option_values": {
         "model": [
           "opus[1m]",
-          "claude-fable-5-2",
-          "opus",
-          "fable"
+          "fable[1m]"
         ]
       },
       "type": "registry"
