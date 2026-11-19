@@ -1,13 +1,1 @@
-{{- /* chezmoi:modify-template */ -}}
-{{- $contents := .chezmoi.stdin -}}
-{{- $config := fromToml $contents -}}
-{{- $key := "model_context_window" -}}
-{{- $window := int64 1000000 -}}
-{{- if not (hasKey $config $key) -}}
-{{- printf "%s = %d\n" $key $window -}}
-{{- if $contents }}{{ printf "\n%s" $contents }}{{ end -}}
-{{- else if deepEqual (get $config $key) $window -}}
-{{- $contents -}}
-{{- else -}}
-{{- set $config $key $window | toToml -}}
-{{- end -}}
+model_context_window = 1000000
