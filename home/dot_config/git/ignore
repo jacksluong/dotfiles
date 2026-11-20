@@ -32,6 +32,7 @@ firebase-debug.log*
 vendor/
 
 # Agents
+/.progress.md
 **/.claude/settings.local.json
 worktrees/
 .worktrees/

@@ -28,6 +28,13 @@ If your harness can switch the session into the worktree, do that. Then:
 
 Remove a worktree when its PR has merged, or when you created it in this session and made no changes in it. Switch the session out of it first, then run `git worktree remove <path>` and delete its local branch with `git branch -D`, since squash merges leave it unmerged. If the worktree has uncommitted changes, or the branch has commits the PR lacks, ask first. Leave other worktrees alone unless the user asks.
 
+# Worktree progress
+
+- For coding tasks, keep a `.progress.md` at the root of the assigned checkout. Get the root by running `git rev-parse --show-toplevel` from that checkout. Read any existing note before starting work. Once the goal is clear, create the note before editing code.
+- If you're resuming the task, check `git status` and the relevant diff against the note before continuing. Only one session should own the note at a time. Keep it out of commits and leave it behind when copying ignored files into a new worktree.
+- Keep the note to one screen and rewrite it as work progresses. Include the status (`active`, `blocked`, or `done`), goal, acceptance criteria and user constraints, meaningful decisions and why, completed and in-progress work, verification commands and results, blockers, and the first concrete next step. Link to existing plans, issues, and relevant files. Leave out secrets.
+- Update the note when the approach changes, a meaningful change lands, a check reveals something, or work gets blocked. Save it before long verification runs and before ending a turn that advanced the task. Mark it `done` when the task is complete.
+
 # Behavior
 Ask clarification questions before you start when a request is unclear or has a choice only the user can make. Once the task is clear, keep working without stopping to ask about things you can decide yourself. Risky or destructive actions still need a go-ahead.
 
