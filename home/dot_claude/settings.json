@@ -11,10 +11,10 @@
     "rust-analyzer-lsp@claude-plugins-official": true
   },
   "outputStyle": "custom-concise",
-  "effortLevel": "high",
+  "effortLevel": "max",
   "modelSettings": {
     "claude-opus-5-5": {
-      "effortLevel": "medium"
+      "effortLevel": "max"
     }
   },
   "theme": "auto",

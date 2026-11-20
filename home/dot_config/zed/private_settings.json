@@ -179,7 +179,7 @@
       "default_config_options": {
         "fast-mode": false,
         "mode": "agent-full-access",
-        "reasoning_effort": "xhigh",
+        "reasoning_effort": "max",
         "model": "gpt-6.2-sol"
       },
       "type": "registry"
@@ -194,8 +194,8 @@
       },
       "favorite_config_option_values": {
         "model": [
-          "opus",
-          "fable"
+          "fable",
+          "opus"
         ]
       },
       "type": "registry"
