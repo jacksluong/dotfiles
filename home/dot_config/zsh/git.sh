@@ -433,6 +433,7 @@ push() {
 
 # `switch [<name>]` to switch to branch <name>, creating it if it doesn't exist
 # if <name> is "-", switch to previous branch
+# if <name> is a number, switch to the branch of an open PR whose number matches <name>
 # if <name> is omitted, switch to default branch
 switch() {
     require_git_repo || return
@@ -453,6 +454,62 @@ switch() {
     if [ "$branch" = "-" ]; then
         git switch -
         return 0
+    fi
+
+    # Resolve a PR number to the branch of an open PR, matching by substring if no number matches exactly
+    if (( $# == 1 )) && [[ "$branch" =~ '^[0-9]+$' ]]; then
+        local pr_query="$branch" pr_list pr_matches pr_count pr_line pr_number pr_is_fork pr_title pr_state pr_selection
+        pr_list=$(gh pr list --state open --limit 1000 --json number,headRefName,isCrossRepository,title --jq '.[] | [.number, .headRefName, .isCrossRepository, .title] | @tsv') || return 1
+
+        pr_matches=$(awk -F'\t' -v q="$pr_query" '$1 == q' <<< "$pr_list")
+        [[ -z "$pr_matches" ]] && pr_matches=$(awk -F'\t' -v q="$pr_query" 'index($1, q)' <<< "$pr_list")
+
+        if [[ -z "$pr_matches" ]]; then
+            pr_state=$(gh pr view "$pr_query" --json state --jq .state 2>/dev/null)
+            if [[ -n "$pr_state" ]]; then
+                echo "PR #$pr_query is ${(L)pr_state}."
+            else
+                echo "No open PR matches '$pr_query'."
+            fi
+            return 1
+        fi
+
+        pr_count=$(echo "$pr_matches" | wc -l | tr -d '[:space:]')
+        pr_line="$pr_matches"
+
+        if (( pr_count > 1 )); then
+            echo "Multiple open PRs match '$pr_query':"
+            local i=1
+            while IFS=$'\t' read -r pr_number branch pr_is_fork pr_title; do
+                echo "$i) #$pr_number $pr_title ($branch)"
+                i=$((i + 1))
+            done <<< "$pr_matches"
+
+            while true; do
+                echo -n "Select PR (or q to cancel): "
+                IFS= read -r pr_selection
+
+                if [ "$pr_selection" = "q" ] || [ "$pr_selection" = "Q" ]; then
+                    return 1
+                fi
+
+                if [[ "$pr_selection" =~ '^[0-9]+$' ]] && (( pr_selection >= 1 && pr_selection <= pr_count )); then
+                    break
+                fi
+
+                echo "Invalid selection. Enter a number between 1 and $pr_count, or q to cancel."
+            done
+
+            pr_line=$(echo "$pr_matches" | sed -n "${pr_selection}p")
+        fi
+
+        IFS=$'\t' read -r pr_number branch pr_is_fork pr_title <<< "$pr_line"
+
+        # Fork branches aren't on origin, so let gh set them up
+        if [[ "$pr_is_fork" == "true" ]]; then
+            gh pr checkout "$pr_number"
+            return
+        fi
     fi
 
     # Check whether this repo has a remote named 'origin'
