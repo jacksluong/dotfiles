@@ -11,6 +11,8 @@ Always follow repo instructions, you don't have to ask unless it conflicts with 
 
 Never include any AI agent as a co-author of commits or mention any AI agent or tool in PR descriptions, comments, or anything Git-related.
 
+This machine does not have `npm` or `npx` installed; it exclusively uses `pnpm` and `pnpm dlx` instead, with node installed via `pnpm`.
+
 # Worktrees
 Make code changes in a git worktree, so the user's main checkout stays as it is. Skip this for read-only tasks, files outside a git repo, the `~/Developer/dotfiles` and `~/Developer/skills` repos, or when the user says to work in the current checkout. If the repo's instructions say how to use worktrees, follow them instead.
 
